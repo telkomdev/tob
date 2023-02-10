@@ -20,7 +20,7 @@ Check `tob` service `status`
 $ sudo systemctl status tob.service
 ```
 
-Stp[] `tob` service
+Stop `tob` service
 ```shell
 $ sudo systemctl stop tob.service
 ```

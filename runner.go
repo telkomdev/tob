@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/dummy"
+	"github.com/telkomdev/tob/postgres"
 	"net/url"
 	"time"
 )
@@ -50,6 +51,9 @@ func (r *Runner) Add(service Service) {
 func (r *Runner) InitServices() error {
 	dummyService := dummy.NewDummy(r.verbose, Logger)
 	r.Add(dummyService)
+
+	postgresService := postgres.NewPostgres(r.verbose, Logger)
+	r.Add(postgresService)
 
 	serviceConfigInterface, ok := r.configs["service"]
 	if !ok {
@@ -150,7 +154,7 @@ func (r *Runner) healthCheck() {
 				}
 			}
 
-			Logger.Println(respStr)
+			Logger.Println(fmt.Sprintf("%s => %s", s.Name(), respStr))
 		}(service)
 	}
 }

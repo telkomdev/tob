@@ -1,4 +1,4 @@
-## Tob
+## Tob => Bot
 
 A Custom Notification Bot written in Go
 

@@ -4,7 +4,6 @@ Documentation=https://github.com/telkomdev/tob/blob/master/README.md
 After=network.target
 
 [Service]
-EnvironmentFile=/home/vagrant/tob/config.json
 Type=simple
 User=vagrant
 ExecStart=/home/vagrant/tob/tob -c /home/vagrant/tob/config.json

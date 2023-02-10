@@ -1,0 +1,16 @@
+[Unit]
+Description=Custom Notification Bot written in Go
+Documentation=https://github.com/telkomdev/tob/blob/master/README.md
+After=network.target
+
+[Service]
+EnvironmentFile=/home/vagrant/tob/config.json
+Type=simple
+User=vagrant
+ExecStart=/home/vagrant/tob/tob -c /home/vagrant/tob/config.json
+StandardOutput=file:/var/log/tob.log
+StandardError=file:/var/log/tob-error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

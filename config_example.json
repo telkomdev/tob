@@ -1,0 +1,22 @@
+{
+    "checkInterval": 10,
+    "service": {
+        "postgresql": {
+            "url": "postgres://tob:tob@localhost/tobdb?sslmode=disable"
+        },
+        "restAPI1": {
+            "url": "http://localhost:9001/health"
+        },
+        "dummy": {
+            "url": "http://localhost:9002/health"
+        }
+    },
+    "notificator": {
+        "discord": {
+            "name": "BoyBot",
+            "url": "https://discord.com/api/webhooks/your_id/your_id",
+            "avatarUrl": "https://i.imgur.com/KHzN7QR.png"
+        }
+    },
+    "version": "1.0.0"
+}

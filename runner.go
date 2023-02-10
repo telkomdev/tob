@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/telkomdev/tob/config"
-	"github.com/telkomdev/tob/dummy"
-	"github.com/telkomdev/tob/postgres"
+	"github.com/telkomdev/tob/services/dummy"
+	"github.com/telkomdev/tob/services/postgres"
 	"net/url"
 	"time"
 )

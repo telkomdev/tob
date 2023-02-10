@@ -8,7 +8,7 @@ import (
 
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
-	"github.com/telkomdev/tob/discord"
+	"github.com/telkomdev/tob/notificators/discord"
 )
 
 func main() {

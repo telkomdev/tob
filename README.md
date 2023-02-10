@@ -1,6 +1,6 @@
 ## Tob
 
-A Custom Notification Bot
+A Custom Notification Bot written in Go
 
 Build and Running
 ```shell

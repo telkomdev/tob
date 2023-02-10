@@ -36,6 +36,8 @@ func ParseArgument() (*Argument, error) {
 		fmt.Println("Usage: ")
 		fmt.Println("tob -[options]")
 		fmt.Println()
+		fmt.Println("tob -c config.json")
+		fmt.Println()
 		fmt.Println("-config | -c (configuration .json file)")
 		fmt.Println("-h | -help (show help)")
 		fmt.Println("-v | -version (show version)")

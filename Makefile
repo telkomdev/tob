@@ -10,7 +10,7 @@ test-verbose:
 	go test -v ./...
 
 format:
-	find . -name "*.go" -not -path "./vendor/*" -not -path ".git/*" | xargs gofmt -s -d -w
+	find . -name "*.go" -not -path "*/vendor/*" -not -path "*/.git/*" -not -path "*/volumes/*" | xargs gofmt -s -d -w
 
 clean:
 	rm tob *.txt

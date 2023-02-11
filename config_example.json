@@ -6,24 +6,35 @@
             "checkInterval": 10,
             "enable": false
         },
+
         "postgresql_two": {
             "kind": "postgresql",
             "url": "postgres://demo:12345@localhost:5433/demo?sslmode=disable",
             "checkInterval": 10,
             "enable": true
         },
+
         "mongodb_one": {
             "kind": "mongodb",
-            "url": "mongodb://admin:admin@localhost:27017/demo",
+            "url": "mongodb://admin:admin@localhost:27017",
             "checkInterval": 10,
             "enable": true
         },
+
         "mysql_one": {
             "kind": "mysql",
             "url": "demo:123456@tcp(127.0.0.1:3306)/demo",
             "checkInterval": 5,
             "enable": true
         },
+
+        "redis_one": {
+            "kind": "redis",
+            "url": "redis://:devpass@127.0.0.1:6379",
+            "checkInterval": 5,
+            "enable": false
+        },
+
         "minio_one": {
             "kind": "web",
             "url": "https://minio-storage.com/minio/health/ready",
@@ -38,6 +49,7 @@
             "enable": true
         }
     },
+    
     "notificator": {
         "discord": {
             "name": "BoyBot",
@@ -45,6 +57,7 @@
             "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
             "enable": true
         },
+
         "email": {
             "authEmail": "postmaster@sandboxxxx.mailgun.org",
             "authPassword": "xxxx",
@@ -56,5 +69,6 @@
             "enable": true
         }
     },
+
     "version": "1.0.0"
 }

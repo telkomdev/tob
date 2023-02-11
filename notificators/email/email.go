@@ -19,6 +19,7 @@ type Email struct {
 	from        string
 	to          []string
 	subject     string
+	enabled     bool
 }
 
 // NewEmail Email's constructor
@@ -82,9 +83,10 @@ func NewEmail(configs config.Config) (*Email, error) {
 		return nil, errors.New("error: cannot find subject field in the config file")
 	}
 
-	fmt.Println(authEmail)
-	fmt.Println(authHost)
-	fmt.Println(toS)
+	enabled, ok := emailConfig["enable"].(bool)
+	if !ok {
+		return nil, errors.New("error: cannot find email enable field in the config file")
+	}
 
 	return &Email{
 		authEmail:    authEmail,
@@ -94,6 +96,7 @@ func NewEmail(configs config.Config) (*Email, error) {
 		from:         from,
 		to:           toS,
 		subject:      subject,
+		enabled:      enabled,
 	}, nil
 }
 
@@ -129,4 +132,9 @@ func (e *Email) Send(msg string) error {
 	}
 
 	return nil
+}
+
+// IsEnabled will return enable status
+func (e *Email) IsEnabled() bool {
+	return e.enabled
 }

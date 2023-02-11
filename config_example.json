@@ -36,7 +36,8 @@
         "discord": {
             "name": "BoyBot",
             "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
-            "avatarUrl": "https://i.imgur.com/KHzN7QR.png"
+            "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+            "enable": true
         },
         "email": {
             "authEmail": "postmaster@sandboxxxx.mailgun.org",
@@ -45,7 +46,8 @@
             "smtpAddress": "smtp.mailgun.org:587",
             "from": "your_email_sender@gmail.com",
             "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
-            "subject": "Tob Notification"
+            "subject": "Tob Notification",
+            "enable": true
         }
     },
     "version": "1.0.0"

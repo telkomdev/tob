@@ -64,7 +64,7 @@ func main() {
 	notificators := []tob.Notificator{emailNotificator, discordNotificator}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*800)
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer func() { cancel() }()
 
 	// runner

@@ -27,6 +27,7 @@ type Discord struct {
 	name      string
 	avatarURL string
 	headers   map[string]string
+	enabled   bool
 }
 
 // NewDiscord Discord's constructor
@@ -60,6 +61,11 @@ func NewDiscord(configs config.Config) (*Discord, error) {
 		return nil, errors.New("error: cannot find discord avatarUrl field in the config file")
 	}
 
+	enabled, ok := discordConfig["enable"].(bool)
+	if !ok {
+		return nil, errors.New("error: cannot find discord enable field in the config file")
+	}
+
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/json"
 
@@ -67,6 +73,7 @@ func NewDiscord(configs config.Config) (*Discord, error) {
 		name:      name,
 		threadURL: threadURL,
 		avatarURL: avatarURL,
+		enabled:   enabled,
 		headers:   headers,
 	}, nil
 }
@@ -95,4 +102,9 @@ func (d *Discord) Send(msg string) error {
 	}
 
 	return nil
+}
+
+// IsEnabled will return enable status
+func (d *Discord) IsEnabled() bool {
+	return d.enabled
 }

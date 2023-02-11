@@ -7,4 +7,7 @@ type Notificator interface {
 
 	// Send will send message to Notificator
 	Send(msg string) error
+
+	// IsEnabled will return enable status
+	IsEnabled() bool
 }

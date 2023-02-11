@@ -7,6 +7,7 @@ import (
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/services/dummy"
 	"github.com/telkomdev/tob/services/postgres"
+	"github.com/telkomdev/tob/services/mysqldb"
 	"github.com/telkomdev/tob/services/web"
 	"net/url"
 	"time"
@@ -44,6 +45,7 @@ func NewRunner(notificators []Notificator, configs config.Config, verbose bool) 
 func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services := make(map[ServiceKind]Service)
 	services[Dummy] = dummy.NewDummy(verbose, Logger)
+	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)
 	services[Postgresql] = postgres.NewPostgres(verbose, Logger)
 	services[Web] = web.NewWeb(verbose, Logger)
 

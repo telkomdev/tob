@@ -14,7 +14,7 @@ type Redis struct {
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
-	client          *redis.Client
+	client        *redis.Client
 	checkInterval int
 	stopChan      chan bool
 }
@@ -83,10 +83,10 @@ func (d *Redis) Connect() error {
 	}
 
 	client := redis.NewClient(&redis.Options{
-        Addr:     host,
-        Password: password,
-        DB:       0,  // use default DB
-    })
+		Addr:     host,
+		Password: password,
+		DB:       0, // use default DB
+	})
 
 	if d.verbose {
 		d.logger.Println("connecting to Redis server succeed")

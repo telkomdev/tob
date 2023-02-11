@@ -18,6 +18,12 @@
             "checkInterval": 10,
             "enable": true
         },
+        "mysql_one": {
+            "kind": "mysql",
+            "url": "demo:123456@tcp(127.0.0.1:3306)/demo",
+            "checkInterval": 5,
+            "enable": true
+        },
         "minio_one": {
             "kind": "web",
             "url": "https://minio-storage.com/minio/health/ready",

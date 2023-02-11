@@ -12,7 +12,7 @@ var (
 	ErrorStatusNot200 = errors.New("error: HTTP Response code not 200")
 )
 
-// HTTPRequest will executes HTTP request and returns the response body.
+// HTTPRequest will executes HTTP request and returns the http.Response.
 // Any errors or non-200 status code result in an error.
 func HTTPRequest(req *http.Request, timeout int) (*http.Response, error) {
 	// set default http client timeout to 5 seconds

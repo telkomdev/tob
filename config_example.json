@@ -55,6 +55,20 @@
             "name": "BoyBot",
             "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
             "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+            "mentions": [
+                "@8XXXXXXXXXXXXXXXXX",
+                "@here"
+            ],
+            "enable": true
+        },
+
+        "slack": {
+            "name": "BoyBot",
+            "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+            "mentions": [
+                "@UXXXXXXXX",
+                "!here"
+            ],
             "enable": true
         },
 

@@ -20,6 +20,7 @@ type Runner struct {
 	verbose      bool
 	initialized  bool
 	notificators []Notificator
+	waiter       Waiter
 }
 
 // NewRunner Runner's constructor
@@ -68,6 +69,8 @@ func (r *Runner) InitServices() error {
 	if !ok {
 		return errors.New("invalid config file")
 	}
+
+	totalServiceToBeExecuted := 0
 
 	for name, confInterface := range serviceConfigs {
 		conf, ok := confInterface.(map[string]interface{})
@@ -126,11 +129,19 @@ func (r *Runner) InitServices() error {
 			if err != nil {
 				return err
 			}
+
+			totalServiceToBeExecuted++
 		}
 	}
 
 	// set initialized to true
 	r.initialized = true
+
+	// set waiter capacity with amount of service to be executed
+	r.waiter = newWaiter(uint(totalServiceToBeExecuted))
+	if r.verbose {
+		Logger.Println(fmt.Sprintf("total service to be executed: %d", uint(totalServiceToBeExecuted)))
+	}
 
 	return nil
 }
@@ -145,19 +156,23 @@ func (r *Runner) Run(ctx context.Context) {
 		panic("notificator cannot be nil")
 	}
 
-	totalServiceToBeExecuted := 0
+	// close waiter's channel indicates that no more values will be sent on it
+	defer func() { r.waiter.Close() }()
 
 	for name, service := range r.services {
 		if service != nil && service.IsEnabled() {
-			totalServiceToBeExecuted++
 
 			ticker := time.NewTicker(time.Second * time.Duration(service.GetCheckInterval()))
 
-			go func(n string, s Service, t *time.Ticker) {
+			go func(n string, s Service, t *time.Ticker, waiter Waiter) {
+
 				for {
 					select {
 					case <-s.Stop():
 						Logger.Println(fmt.Sprintf("runner service %s received stop channel, cleanup resource now !!", n))
+
+						// tell waiter this service execution is done
+						waiter.Done()
 
 						return
 					case <-t.C:
@@ -168,9 +183,11 @@ func (r *Runner) Run(ctx context.Context) {
 							s.SetRecover(false)
 
 							for _, notificator := range r.notificators {
-								err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
-								if err != nil {
-									Logger.Println(err)
+								if notificator.IsEnabled() {
+									err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
+									if err != nil {
+										Logger.Println(err)
+									}
 								}
 							}
 						}
@@ -180,9 +197,11 @@ func (r *Runner) Run(ctx context.Context) {
 							s.SetRecover(true)
 
 							for _, notificator := range r.notificators {
-								err := notificator.Send(fmt.Sprintf("%s is UP", n))
-								if err != nil {
-									Logger.Println(err)
+								if notificator.IsEnabled() {
+									err := notificator.Send(fmt.Sprintf("%s is UP", n))
+									if err != nil {
+										Logger.Println(err)
+									}
 								}
 							}
 						}
@@ -190,13 +209,9 @@ func (r *Runner) Run(ctx context.Context) {
 						Logger.Println(fmt.Sprintf("%s => %s", n, respStr))
 					}
 				}
-			}(name, service, ticker)
+			}(name, service, ticker, r.waiter)
 
 		}
-	}
-
-	if r.verbose {
-		Logger.Println(fmt.Sprintf("total service to be executed: %d", totalServiceToBeExecuted))
 	}
 
 	// block here
@@ -210,6 +225,9 @@ func (r *Runner) Run(ctx context.Context) {
 		case <-ctx.Done():
 			Logger.Println("runner context canceled")
 			r.cleanup()
+
+			// wait all service's goroutine stop
+			r.waiter.Wait()
 			return
 		default:
 		}
@@ -218,11 +236,17 @@ func (r *Runner) Run(ctx context.Context) {
 		case <-r.stopChan:
 			Logger.Println("runner received stop channel, cleanup resource now !!")
 			r.cleanup()
+
+			// wait all service's goroutine stop
+			r.waiter.Wait()
 			return
 
 		case <-ctx.Done():
 			Logger.Println("runner context canceled")
 			r.cleanup()
+
+			// wait all service's goroutine stop
+			r.waiter.Wait()
 			return
 		}
 	}

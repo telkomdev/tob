@@ -20,14 +20,14 @@
         },
         "minio_one": {
             "kind": "web",
-            "url": "https://storage-assurance-dev.mytens.id/minio/health/ready",
+            "url": "https://minio-storage.com/minio/health/ready",
             "checkInterval": 10,
             "enable": true
         },
 
         "dummy_one": {
             "kind": "dummy",
-            "url": "https://storage-assurance-dev.mytens.id/minio/health/ready",
+            "url": "https://minio-storage.com/minio/health/ready",
             "checkInterval": 5,
             "enable": true
         }

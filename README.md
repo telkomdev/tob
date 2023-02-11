@@ -5,11 +5,11 @@
 A Notification Bot written in Go
 </div>
 
-<div align="center">
-<h4>Architecture</h4>
+### Architecture
 
 [<img src="./assets/tob_arch.PNG" width="400">](https://github.com/telkomdev/tob)
-</div>
+
+### Getting Started
 
 Build and Running
 ```shell

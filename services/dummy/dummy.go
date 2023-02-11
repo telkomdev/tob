@@ -7,20 +7,26 @@ import (
 
 // Dummy service
 type Dummy struct {
-	url       string
-	recovered bool
-	verbose   bool
-	logger    *log.Logger
+	url           string
+	recovered     bool
+	enabled       bool
+	verbose       bool
+	logger        *log.Logger
+	checkInterval int
+	stopChan      chan bool
 }
 
 // NewDummy Dummy's constructor
 func NewDummy(verbose bool, logger *log.Logger) *Dummy {
+	stopChan := make(chan bool, 1)
 	return &Dummy{
 		logger:  logger,
 		verbose: verbose,
 
 		// by default service is recovered
-		recovered: true,
+		recovered:     true,
+		checkInterval: 0,
+		stopChan:      stopChan,
 	}
 }
 
@@ -70,4 +76,29 @@ func (d *Dummy) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Dummy) IsRecover() bool {
 	return d.recovered
+}
+
+// SetCheckInterval will set check interval to service
+func (d *Dummy) SetCheckInterval(interval int) {
+	d.checkInterval = interval
+}
+
+// GetCheckInterval will return check interval to service
+func (d *Dummy) GetCheckInterval() int {
+	return d.checkInterval
+}
+
+// Enable will set enabled status to service
+func (d *Dummy) Enable(enabled bool) {
+	d.enabled = enabled
+}
+
+// IsEnabled will return enable status
+func (d *Dummy) IsEnabled() bool {
+	return d.enabled
+}
+
+// Stop will receive stop channel
+func (d *Dummy) Stop() chan bool {
+	return d.stopChan
 }

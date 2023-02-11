@@ -1,5 +1,27 @@
 package tob
 
+type ServiceKind string
+
+var (
+	// Postgresql service kind
+	Postgresql ServiceKind = "postgresql"
+
+	// MySQL service kind
+	MySQL ServiceKind = "mysql"
+
+	// Web service kind
+	Web ServiceKind = "web"
+
+	// MongoDB service kind
+	MongoDB ServiceKind = "mongodb"
+
+	// Redis service kind
+	Redis ServiceKind = "redis"
+
+	// Dummy service kind
+	Dummy ServiceKind = "dummy"
+)
+
 // Service represent available services
 type Service interface {
 
@@ -23,4 +45,19 @@ type Service interface {
 
 	// IsRecover will return recovered status
 	IsRecover() bool
+
+	// SetCheckInterval will set check interval to service
+	SetCheckInterval(interval int)
+
+	// GetCheckInterval will return check interval to service
+	GetCheckInterval() int
+
+	// Enable will set disabled to service
+	Enable(disabled bool)
+
+	// IsEnabled will return enable status
+	IsEnabled() bool
+
+	// Stop will receive stop channel
+	Stop() chan bool
 }

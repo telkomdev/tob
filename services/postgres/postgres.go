@@ -8,21 +8,27 @@ import (
 
 // Postgres service
 type Postgres struct {
-	url       string
-	recovered bool
-	verbose   bool
-	logger    *log.Logger
-	db        *sql.DB
+	url           string
+	recovered     bool
+	enabled       bool
+	verbose       bool
+	logger        *log.Logger
+	db            *sql.DB
+	checkInterval int
+	stopChan      chan bool
 }
 
 // NewPostgres Postgres's constructor
 func NewPostgres(verbose bool, logger *log.Logger) *Postgres {
+	stopChan := make(chan bool, 1)
 	return &Postgres{
 		logger:  logger,
 		verbose: verbose,
 
 		// by default service is recovered
-		recovered: true,
+		recovered:     true,
+		checkInterval: 0,
+		stopChan:      stopChan,
 	}
 }
 
@@ -98,4 +104,29 @@ func (d *Postgres) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Postgres) IsRecover() bool {
 	return d.recovered
+}
+
+// SetCheckInterval will set check interval to service
+func (d *Postgres) SetCheckInterval(interval int) {
+	d.checkInterval = interval
+}
+
+// GetCheckInterval will return check interval to service
+func (d *Postgres) GetCheckInterval() int {
+	return d.checkInterval
+}
+
+// Enable will set enabled status to service
+func (d *Postgres) Enable(enabled bool) {
+	d.enabled = enabled
+}
+
+// IsEnabled will return enable status
+func (d *Postgres) IsEnabled() bool {
+	return d.enabled
+}
+
+// Stop will receive stop channel
+func (d *Postgres) Stop() chan bool {
+	return d.stopChan
 }

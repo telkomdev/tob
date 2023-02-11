@@ -1,20 +1,41 @@
 {
-    "checkInterval": 10,
     "service": {
-        "postgresql": {
-            "url": "postgres://tob:tob@localhost/tobdb?sslmode=disable"
+        "postgresql_one": {
+            "kind": "postgresql",
+            "url": "postgres://demo:12345@localhost:5432/demo?sslmode=disable",
+            "checkInterval": 10,
+            "enable": false
         },
-        "restAPI1": {
-            "url": "http://localhost:9001/health"
+        "postgresql_two": {
+            "kind": "postgresql",
+            "url": "postgres://demo:12345@localhost:5433/demo?sslmode=disable",
+            "checkInterval": 10,
+            "enable": true
         },
-        "dummy": {
-            "url": "http://localhost:9002/health"
+        "mongodb_one": {
+            "kind": "mongodb",
+            "url": "mongodb://admin:admin@localhost:27017/demo",
+            "checkInterval": 10,
+            "enable": true
+        },
+        "minio_one": {
+            "kind": "web",
+            "url": "https://minio-storage.com/minio/health/ready",
+            "checkInterval": 10,
+            "enable": true
+        },
+
+        "dummy_one": {
+            "kind": "dummy",
+            "url": "https://minio-storage.com/minio/health/ready",
+            "checkInterval": 10,
+            "enable": true
         }
     },
     "notificator": {
         "discord": {
             "name": "BoyBot",
-            "url": "https://discord.com/api/webhooks/your_id/your_id",
+            "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
             "avatarUrl": "https://i.imgur.com/KHzN7QR.png"
         }
     },

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -50,25 +51,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	checkIntervalF, ok := configs["checkInterval"].(float64)
-	if !ok {
-		fmt.Println("error: cannot find checkInterval in config file")
-		os.Exit(1)
-	}
-
-	// convert to int
-	checkInterval := int(checkIntervalF)
-	fmt.Println(checkInterval)
-
-	if checkInterval <= 0 {
-		// set check interval to 5 minutes
-		checkInterval = 5000
-	}
-
 	notificators := []tob.Notificator{discordNotificator}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*800)
+	defer func() { cancel() }()
+
 	// runner
-	runner, err := tob.NewRunner(checkInterval, notificators, configs, args.Verbose)
+	runner, err := tob.NewRunner(notificators, configs, args.Verbose)
 	if err != nil {
 		fmt.Println("error: ", err)
 		os.Exit(1)
@@ -86,7 +76,7 @@ func main() {
 	go waitNotify(kill, runner)
 
 	// run the Runner
-	runner.Run()
+	runner.Run(ctx)
 
 }
 

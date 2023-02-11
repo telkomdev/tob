@@ -2,8 +2,8 @@ package web
 
 import (
 	"fmt"
-	"log"
 	"github.com/telkomdev/tob/httpx"
+	"log"
 )
 
 // Web service
@@ -51,7 +51,7 @@ func (d *Web) Ping() []byte {
 
 		return []byte("NOT_OK")
 	}
-	
+
 	if d.verbose {
 		d.logger.Println(fmt.Sprintf("web Ping status: %d", resp.StatusCode))
 	}

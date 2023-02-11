@@ -20,15 +20,15 @@
         },
         "minio_one": {
             "kind": "web",
-            "url": "https://minio-storage.com/minio/health/ready",
+            "url": "https://storage-assurance-dev.mytens.id/minio/health/ready",
             "checkInterval": 10,
             "enable": true
         },
 
         "dummy_one": {
             "kind": "dummy",
-            "url": "https://minio-storage.com/minio/health/ready",
-            "checkInterval": 10,
+            "url": "https://storage-assurance-dev.mytens.id/minio/health/ready",
+            "checkInterval": 5,
             "enable": true
         }
     },
@@ -37,6 +37,15 @@
             "name": "BoyBot",
             "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
             "avatarUrl": "https://i.imgur.com/KHzN7QR.png"
+        },
+        "email": {
+            "authEmail": "postmaster@sandboxxxx.mailgun.org",
+            "authPassword": "xxxx",
+            "authHost": "smtp.mailgun.org",
+            "smtpAddress": "smtp.mailgun.org:587",
+            "from": "your_email_sender@gmail.com",
+            "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+            "subject": "Tob Notification"
         }
     },
     "version": "1.0.0"

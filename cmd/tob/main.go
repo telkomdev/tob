@@ -10,6 +10,7 @@ import (
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/notificators/discord"
+	"github.com/telkomdev/tob/notificators/email"
 )
 
 func main() {
@@ -45,13 +46,22 @@ func main() {
 	}
 
 	// init Notificator
+
+	// discord notificator
 	discordNotificator, err := discord.NewDiscord(configs)
 	if err != nil {
 		fmt.Println("error: ", err)
 		os.Exit(1)
 	}
 
-	notificators := []tob.Notificator{discordNotificator}
+	// email notificator
+	emailNotificator, err := email.NewEmail(configs)
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+
+	notificators := []tob.Notificator{emailNotificator, discordNotificator}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*800)

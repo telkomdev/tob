@@ -75,7 +75,11 @@ func main() {
 	}
 
 	// initialize service from runner
-	runner.InitServices()
+	err = runner.InitServices()
+	if err != nil {
+		fmt.Println("error InitServices : ", err)
+		os.Exit(1)
+	}
 
 	kill := make(chan os.Signal, 1)
 	// notify when user interrupt the process

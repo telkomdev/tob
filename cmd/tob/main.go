@@ -67,8 +67,6 @@ func main() {
 	// initialize service from runner
 	runner.InitServices()
 
-	fmt.Println("wait...")
-
 	kill := make(chan os.Signal, 1)
 	// notify when user interrupt the process
 	signal.Notify(kill, syscall.SIGINT, syscall.SIGTERM)

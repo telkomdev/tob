@@ -1,5 +1,6 @@
 package tob
 
+// ServiceKind represent a type/kind of service
 type ServiceKind string
 
 var (

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 )
 
 var (
@@ -13,8 +14,17 @@ var (
 
 // HTTPRequest will executes HTTP request and returns the response body.
 // Any errors or non-200 status code result in an error.
-func HTTPRequest(req *http.Request) (*http.Response, error) {
-	resp, err := http.DefaultClient.Do(req)
+func HTTPRequest(req *http.Request, timeout int) (*http.Response, error) {
+	// set default http client timeout to 5 seconds
+	if timeout <= 0 {
+		timeout = 5
+	}
+
+	client := http.Client{
+		Timeout: time.Duration(timeout) * time.Second,
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +33,7 @@ func HTTPRequest(req *http.Request) (*http.Response, error) {
 }
 
 // HTTPPost will execute HTTP POST with json payload
-func HTTPPost(url string, body io.Reader, headers map[string]string) (*http.Response, error) {
+func HTTPPost(url string, body io.Reader, headers map[string]string, timeout int) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
@@ -35,11 +45,11 @@ func HTTPPost(url string, body io.Reader, headers map[string]string) (*http.Resp
 		}
 	}
 
-	return HTTPRequest(req)
+	return HTTPRequest(req, timeout)
 }
 
 // HTTPGet will execute HTTP GET
-func HTTPGet(url string, headers map[string]string) (*http.Response, error) {
+func HTTPGet(url string, headers map[string]string, timeout int) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -51,5 +61,5 @@ func HTTPGet(url string, headers map[string]string) (*http.Response, error) {
 		}
 	}
 
-	return HTTPRequest(req)
+	return HTTPRequest(req, timeout)
 }

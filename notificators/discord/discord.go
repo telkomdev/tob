@@ -89,7 +89,7 @@ func (d *Discord) Send(msg string) error {
 		return err
 	}
 
-	_, err = httpx.HTTPPost(d.threadURL, bytes.NewBuffer(messageJSON), d.headers)
+	_, err = httpx.HTTPPost(d.threadURL, bytes.NewBuffer(messageJSON), d.headers, 5)
 	if err != nil {
 		return err
 	}

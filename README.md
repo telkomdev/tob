@@ -27,7 +27,5 @@ $ ./tob -c config.json
 ```
 
 ### TODO
-- add MySQL service
-- add MongoDB service
+
 - add Kafka service
-- add Redis service

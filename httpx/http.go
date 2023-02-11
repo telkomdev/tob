@@ -32,7 +32,7 @@ func HTTPRequest(req *http.Request, timeout int) (*http.Response, error) {
 	return resp, nil
 }
 
-// HTTPPost will execute HTTP POST with json payload
+// HTTPPost will execute HTTP POST
 func HTTPPost(url string, body io.Reader, headers map[string]string, timeout int) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {

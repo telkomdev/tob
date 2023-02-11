@@ -146,6 +146,53 @@ func (r *Runner) InitServices() error {
 	return nil
 }
 
+func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificators []Notificator) {
+
+	for {
+		select {
+		case <-s.Stop():
+			Logger.Println(fmt.Sprintf("runner service %s received stop channel, cleanup resource now !!", n))
+
+			// tell waiter this service execution is done
+			waiter.Done()
+
+			return
+		case <-t.C:
+			resp := s.Ping()
+			respStr := string(resp)
+			if respStr == NotOk && s.IsRecover() {
+				// set recover to false
+				s.SetRecover(false)
+
+				for _, notificator := range notificators {
+					if notificator.IsEnabled() {
+						err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
+						if err != nil {
+							Logger.Println(err)
+						}
+					}
+				}
+			}
+
+			if respStr == OK && !s.IsRecover() {
+				// set recover to true
+				s.SetRecover(true)
+
+				for _, notificator := range notificators {
+					if notificator.IsEnabled() {
+						err := notificator.Send(fmt.Sprintf("%s is UP", n))
+						if err != nil {
+							Logger.Println(err)
+						}
+					}
+				}
+			}
+
+			Logger.Println(fmt.Sprintf("%s => %s", n, respStr))
+		}
+	}
+}
+
 // Run will Run the tob Runner
 func (r *Runner) Run(ctx context.Context) {
 	if !r.initialized {
@@ -164,52 +211,8 @@ func (r *Runner) Run(ctx context.Context) {
 
 			ticker := time.NewTicker(time.Second * time.Duration(service.GetCheckInterval()))
 
-			go func(n string, s Service, t *time.Ticker, waiter Waiter) {
-
-				for {
-					select {
-					case <-s.Stop():
-						Logger.Println(fmt.Sprintf("runner service %s received stop channel, cleanup resource now !!", n))
-
-						// tell waiter this service execution is done
-						waiter.Done()
-
-						return
-					case <-t.C:
-						resp := s.Ping()
-						respStr := string(resp)
-						if respStr == NotOk && s.IsRecover() {
-							// set recover to false
-							s.SetRecover(false)
-
-							for _, notificator := range r.notificators {
-								if notificator.IsEnabled() {
-									err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
-									if err != nil {
-										Logger.Println(err)
-									}
-								}
-							}
-						}
-
-						if respStr == OK && !s.IsRecover() {
-							// set recover to true
-							s.SetRecover(true)
-
-							for _, notificator := range r.notificators {
-								if notificator.IsEnabled() {
-									err := notificator.Send(fmt.Sprintf("%s is UP", n))
-									if err != nil {
-										Logger.Println(err)
-									}
-								}
-							}
-						}
-
-						Logger.Println(fmt.Sprintf("%s => %s", n, respStr))
-					}
-				}
-			}(name, service, ticker, r.waiter)
+			// run all services health check on its goroutine
+			go healthCheck(name, service, ticker, r.waiter, r.notificators)
 
 		}
 	}

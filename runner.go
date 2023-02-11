@@ -229,7 +229,7 @@ func (r *Runner) Run(ctx context.Context) {
 			Logger.Println("runner context canceled")
 			r.cleanup()
 
-			// wait all service's goroutine stop
+			// wait all service's goroutine to stop
 			r.waiter.Wait()
 			return
 		default:
@@ -240,7 +240,7 @@ func (r *Runner) Run(ctx context.Context) {
 			Logger.Println("runner received stop channel, cleanup resource now !!")
 			r.cleanup()
 
-			// wait all service's goroutine stop
+			// wait all service's goroutine to stop
 			r.waiter.Wait()
 			return
 
@@ -248,7 +248,7 @@ func (r *Runner) Run(ctx context.Context) {
 			Logger.Println("runner context canceled")
 			r.cleanup()
 
-			// wait all service's goroutine stop
+			// wait all service's goroutine to stop
 			r.waiter.Wait()
 			return
 		}

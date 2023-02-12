@@ -12,7 +12,7 @@ A Notification Bot written in Go
 ## Getting Started
 
 ### Install from release (https://github.com/telkomdev/tob/releases)
-select the binary from the release according to your platform, for example for the Linux platform
+choose the binary from the release according to your platform, for example for the Linux platform
 
 #### Download binary
 

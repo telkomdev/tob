@@ -23,7 +23,7 @@ var (
 	Dummy ServiceKind = "dummy"
 )
 
-// Service represent available services
+// Service represent base of all available services
 type Service interface {
 
 	// Name the name of the service

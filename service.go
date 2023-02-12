@@ -47,6 +47,12 @@ type Service interface {
 	// IsRecover will return recovered status
 	IsRecover() bool
 
+	// LastDownTime will set last down time of service to current time
+	SetLastDownTimeNow()
+
+	// GetDownTimeDiff will return down time service difference in minutes
+	GetDownTimeDiff() string
+
 	// SetCheckInterval will set check interval to service
 	SetCheckInterval(interval int)
 

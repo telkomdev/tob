@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 check_err()
 {
@@ -11,6 +11,8 @@ check_err()
 package() 
 {
     VERSION=$1
+    OSNAME="linux"
+
     if [ -z "$VERSION" ]; then
         echo "$0 require version argument"
         return 1
@@ -34,9 +36,20 @@ package()
     rm tob.exe
 
     echo "generate sha256sum ..."
-    sha256sum tob-${VERSION}.darwin-amd64.tar.gz >> sha256sums.txt
-    sha256sum tob-${VERSION}.linux-amd64.tar.gz >> sha256sums.txt
-    sha256sum tob-${VERSION}.win-amd64.zip >> sha256sums.txt
+
+    if [ $(uname) = "Darwin" ]; then
+        OSNAME="darwin"
+    fi
+
+    if [ "$OSNAME" = "linux" ]; then
+        sha256sum tob-${VERSION}.darwin-amd64.tar.gz >> sha256sums.txt
+        sha256sum tob-${VERSION}.linux-amd64.tar.gz >> sha256sums.txt
+        sha256sum tob-${VERSION}.win-amd64.zip >> sha256sums.txt
+    else 
+        shasum -a 256 tob-${VERSION}.darwin-amd64.tar.gz >> sha256sums.txt
+        shasum -a 256 tob-${VERSION}.linux-amd64.tar.gz >> sha256sums.txt
+        shasum -a 256 tob-${VERSION}.win-amd64.zip >> sha256sums.txt
+    fi
 
     return 0
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/telkomdev/tob/notificators/discord"
 	"github.com/telkomdev/tob/notificators/email"
 	"github.com/telkomdev/tob/notificators/slack"
+	"github.com/telkomdev/tob/notificators/telegram"
 )
 
 func main() {
@@ -70,10 +71,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	// telegram notificator
+	telegramNotificator, err := telegram.NewTelegram(configs)
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+
 	notificators := []tob.Notificator{
 		emailNotificator,
 		discordNotificator,
 		slackNotificator,
+		telegramNotificator,
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())

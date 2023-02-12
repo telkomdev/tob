@@ -81,6 +81,12 @@
             "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
             "subject": "Tob Notification",
             "enable": true
+        },
+
+        "telegram": {
+            "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+            "groupId": "-111111111",
+            "enable": true
         }
     },
 

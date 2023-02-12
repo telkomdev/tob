@@ -20,9 +20,9 @@ Download binary
 $  wget https://github.com/telkomdev/tob/releases/download/1.0.0/tob-1.0.0.linux-amd64.tar.gz
 ```
 
-#### Important !!!, always check the SHA256 chechsum before using it
+#### Important !!!, always check the SHA256 Checksum before using it
 
-Download the `sha256sum.txt` https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt
+Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt
 
 ```shell
 $ wget https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt

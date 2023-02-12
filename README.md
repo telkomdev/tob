@@ -14,7 +14,7 @@ A Notification Bot written in Go
 ### Install from release (https://github.com/telkomdev/tob/releases)
 select the binary from the release according to your platform, for example for the Linux platform
 
-Download binary
+#### Download binary
 
 ```shell
 $  wget https://github.com/telkomdev/tob/releases/download/1.0.0/tob-1.0.0.linux-amd64.tar.gz
@@ -42,13 +42,13 @@ Mac OSX
 $ shasum -a 256 tob-1.0.0.darwin-amd64.tar.gz -c sha256sums.txt
 ```
 
-Extract
+#### Extract
 
 ```shell
 $ tar -xvzf tob-1.0.0.linux-amd64.tar.gz
 ```
 
-Run
+#### Run
 
 ```shell
 $ ./tob -h

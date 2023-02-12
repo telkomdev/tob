@@ -58,7 +58,9 @@ package "$@"
 check_err $? "package returned error"
 
 # How to run this script
-# ./package.sh YOUR_NEW_VERSION_HERE
+
+# always execute package.sh from root project folder
+# ./scripts/package.sh YOUR_NEW_VERSION_HERE
 
 # eg:
-# ./package.sh 1.0.0
+# ./scripts/package.sh 1.0.0

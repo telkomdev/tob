@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/services/dummy"
 	"github.com/telkomdev/tob/services/mongodb"
@@ -11,8 +14,6 @@ import (
 	"github.com/telkomdev/tob/services/postgres"
 	"github.com/telkomdev/tob/services/redisdb"
 	"github.com/telkomdev/tob/services/web"
-	"net/url"
-	"time"
 )
 
 // Runner the tob runner
@@ -167,6 +168,8 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 			resp := s.Ping()
 			respStr := string(resp)
 			if respStr == NotOk && s.IsRecover() {
+				// set last downtime
+				s.SetLastDownTimeNow()
 				// set recover to false
 				s.SetRecover(false)
 
@@ -186,7 +189,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 
 				for _, notificator := range notificators {
 					if notificator.IsEnabled() {
-						err := notificator.Send(fmt.Sprintf("%s is UP", n))
+						err := notificator.Send(fmt.Sprintf("%s is UP. It was down for %s", n, s.GetDownTimeDiff()))
 						if err != nil {
 							Logger.Println(err)
 						}

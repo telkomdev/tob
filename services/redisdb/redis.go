@@ -2,15 +2,19 @@ package redisdb
 
 import (
 	"context"
-	"github.com/redis/go-redis/v9"
 	"log"
 	"net/url"
+	"time"
+
+	"github.com/redis/go-redis/v9"
+	"github.com/telkomdev/tob/util"
 )
 
 // Redis service
 type Redis struct {
 	url           string
 	recovered     bool
+	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
@@ -126,6 +130,18 @@ func (d *Redis) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Redis) IsRecover() bool {
 	return d.recovered
+}
+
+// LastDownTime will set last down time of service to current time
+func (d *Redis) SetLastDownTimeNow() {
+	if d.recovered {
+		d.lastDownTime = time.Now().Format(util.YYMMDD)
+	}
+}
+
+// GetDownTimeDiff will return down time service difference in minutes
+func (d *Redis) GetDownTimeDiff() string {
+	return util.TimeDifference(d.lastDownTime, time.Now().Format(util.YYMMDD))
 }
 
 // SetCheckInterval will set check interval to service

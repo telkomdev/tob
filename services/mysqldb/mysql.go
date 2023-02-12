@@ -2,14 +2,18 @@ package mysqldb
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/telkomdev/tob/util"
 )
 
 // MySQL service
 type MySQL struct {
 	url           string
 	recovered     bool
+	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
@@ -104,6 +108,18 @@ func (d *MySQL) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *MySQL) IsRecover() bool {
 	return d.recovered
+}
+
+// LastDownTime will set last down time of service to current time
+func (d *MySQL) SetLastDownTimeNow() {
+	if d.recovered {
+		d.lastDownTime = time.Now().Format(util.YYMMDD)
+	}
+}
+
+// GetDownTimeDiff will return down time service difference in minutes
+func (d *MySQL) GetDownTimeDiff() string {
+	return util.TimeDifference(d.lastDownTime, time.Now().Format(util.YYMMDD))
 }
 
 // SetCheckInterval will set check interval to service

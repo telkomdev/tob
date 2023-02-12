@@ -2,14 +2,19 @@ package web
 
 import (
 	"fmt"
-	"github.com/telkomdev/tob/httpx"
 	"log"
+	"time"
+
+	"github.com/telkomdev/tob/httpx"
+	"github.com/telkomdev/tob/util"
 )
 
 // Web service
 type Web struct {
 	url           string
 	recovered     bool
+	serviceName   string
+	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
@@ -90,6 +95,18 @@ func (d *Web) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Web) IsRecover() bool {
 	return d.recovered
+}
+
+// LastDownTime will set last down time of service to current time
+func (d *Web) SetLastDownTimeNow() {
+	if d.recovered {
+		d.lastDownTime = time.Now().Format(util.YYMMDD)
+	}
+}
+
+// GetDownTimeDiff will return down time service difference in minutes
+func (d *Web) GetDownTimeDiff() string {
+	return util.TimeDifference(d.lastDownTime, time.Now().Format(util.YYMMDD))
 }
 
 // SetCheckInterval will set check interval to service

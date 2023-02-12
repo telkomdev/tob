@@ -54,7 +54,7 @@ Run
 $ ./tob -h
 ```
 
-#### Build from source
+### Build from source
 
 Requirements
 - Go version 1.16 or higher

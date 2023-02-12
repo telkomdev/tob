@@ -59,8 +59,8 @@ type Service interface {
 	// GetCheckInterval will return check interval to service
 	GetCheckInterval() int
 
-	// Enable will set disabled to service
-	Enable(disabled bool)
+	// Enable will set enabled status to service
+	Enable(enabled bool)
 
 	// IsEnabled will return enable status
 	IsEnabled() bool

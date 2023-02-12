@@ -35,7 +35,7 @@ package()
     zip tob-${VERSION}.win-amd64.zip tob.exe
     rm tob.exe
 
-    echo "generate sha256sum ..."
+    echo "generate SHA256 checksum ..."
 
     if [ $(uname) = "Darwin" ]; then
         OSNAME="darwin"

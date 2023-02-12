@@ -69,7 +69,7 @@
                 "@UXXXXXXXX",
                 "!here"
             ],
-            "enable": true
+            "enable": false
         },
 
         "email": {
@@ -80,7 +80,7 @@
             "from": "your_email_sender@gmail.com",
             "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
             "subject": "Tob Notification",
-            "enable": true
+            "enable": false
         },
 
         "telegram": {

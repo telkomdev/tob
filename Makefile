@@ -25,4 +25,4 @@ format:
 	find . -name "*.go" -not -path "*/vendor/*" -not -path "*/.git/*" -not -path "*/volumes/*" | xargs gofmt -s -d -w
 
 clean:
-	rm tob tob.exe *.txt
+	rm -f tob tob.exe *.txt

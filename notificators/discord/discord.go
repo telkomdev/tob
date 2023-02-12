@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
+	"strings"
 )
 
 // DiscordMessage represent discord request
@@ -27,6 +29,7 @@ type Discord struct {
 	name      string
 	avatarURL string
 	headers   map[string]string
+	mentions  []string
 	enabled   bool
 }
 
@@ -61,6 +64,21 @@ func NewDiscord(configs config.Config) (*Discord, error) {
 		return nil, errors.New("error: cannot find discord avatarUrl field in the config file")
 	}
 
+	mentionsInterface, ok := discordConfig["mentions"].([]interface{})
+	if !ok {
+		return nil, errors.New("error: cannot find discord mentions field in the config file")
+	}
+
+	var mentions []string
+	for _, mentionInterface := range mentionsInterface {
+		mention, ok := mentionInterface.(string)
+		if !ok {
+			return nil, errors.New("error: mention field is not valid string")
+		}
+
+		mentions = append(mentions, mention)
+	}
+
 	enabled, ok := discordConfig["enable"].(bool)
 	if !ok {
 		return nil, errors.New("error: cannot find discord enable field in the config file")
@@ -75,6 +93,7 @@ func NewDiscord(configs config.Config) (*Discord, error) {
 		avatarURL: avatarURL,
 		enabled:   enabled,
 		headers:   headers,
+		mentions:  mentions,
 	}, nil
 }
 
@@ -85,6 +104,24 @@ func (d *Discord) Provider() string {
 
 // Send will send notification
 func (d *Discord) Send(msg string) error {
+	var messageBuilder strings.Builder
+
+	messageBuilder.WriteString("Hey ")
+	for _, mention := range d.mentions {
+		if strings.Contains(mention, "here") {
+			messageBuilder.WriteString(fmt.Sprintf("%s", mention))
+		} else {
+			messageBuilder.WriteString(fmt.Sprintf("<%s>", mention))
+		}
+
+		messageBuilder.WriteString(", ")
+	}
+
+	messageBuilder.WriteString(" ")
+	messageBuilder.WriteString(msg)
+
+	msg = messageBuilder.String()
+
 	discordMessage := DiscordMessage{
 		Username:  d.name,
 		AvatarURL: d.avatarURL,

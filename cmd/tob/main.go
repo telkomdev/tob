@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/notificators/discord"
 	"github.com/telkomdev/tob/notificators/email"
+	"github.com/telkomdev/tob/notificators/slack"
+	"github.com/telkomdev/tob/notificators/telegram"
 )
 
 func main() {
@@ -22,7 +25,7 @@ func main() {
 	}
 
 	if args.ShowVersion {
-		fmt.Printf("%s version %s\n", os.Args[0], tob.Version)
+		fmt.Printf("%s version %s (runtime: %s)\n", os.Args[0], tob.Version, runtime.Version())
 		os.Exit(0)
 	}
 
@@ -61,7 +64,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	notificators := []tob.Notificator{emailNotificator, discordNotificator}
+	// slack notificator
+	slackNotificator, err := slack.NewSlack(configs)
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+
+	// telegram notificator
+	telegramNotificator, err := telegram.NewTelegram(configs)
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+
+	notificators := []tob.Notificator{
+		emailNotificator,
+		discordNotificator,
+		slackNotificator,
+		telegramNotificator,
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
@@ -96,6 +118,6 @@ func waitNotify(kill chan os.Signal, runner *tob.Runner) {
 	select {
 	case <-kill:
 		runner.Stop() <- true
-		fmt.Println("kill process")
+		fmt.Println("kill tob")
 	}
 }

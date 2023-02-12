@@ -160,6 +160,9 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 		case <-s.Stop():
 			Logger.Println(fmt.Sprintf("runner service %s received stop channel, cleanup resource now !!", n))
 
+			// stop ticker
+			t.Stop()
+
 			// tell waiter this service execution is done
 			waiter.Done()
 

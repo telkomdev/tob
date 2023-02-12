@@ -42,6 +42,13 @@
             "enable": true
         },
 
+        "elasticsearch_cluster_one": {
+            "kind": "web",
+            "url": "http://elastic:devpass@localhost:9200/_cluster/health?pretty",
+            "checkInterval": 10,
+            "enable": true
+        },
+
         "dummy_one": {
             "kind": "dummy",
             "url": "https://minio-storage.com/minio/health/ready",
@@ -55,7 +62,21 @@
             "name": "BoyBot",
             "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
             "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+            "mentions": [
+                "@8XXXXXXXXXXXXXXXXX",
+                "@here"
+            ],
             "enable": true
+        },
+
+        "slack": {
+            "name": "BoyBot",
+            "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+            "mentions": [
+                "@UXXXXXXXX",
+                "!here"
+            ],
+            "enable": false
         },
 
         "email": {
@@ -66,6 +87,12 @@
             "from": "your_email_sender@gmail.com",
             "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
             "subject": "Tob Notification",
+            "enable": false
+        },
+
+        "telegram": {
+            "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+            "groupId": "-111111111",
             "enable": true
         }
     },

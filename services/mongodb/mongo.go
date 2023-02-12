@@ -2,16 +2,19 @@ package mongodb
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
+
+	"github.com/telkomdev/tob/util"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Mongo service
 type Mongo struct {
 	url           string
 	recovered     bool
+	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
@@ -117,6 +120,18 @@ func (d *Mongo) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Mongo) IsRecover() bool {
 	return d.recovered
+}
+
+// LastDownTime will set last down time of service to current time
+func (d *Mongo) SetLastDownTimeNow() {
+	if d.recovered {
+		d.lastDownTime = time.Now().Format(util.YYMMDD)
+	}
+}
+
+// GetDownTimeDiff will return down time service difference in minutes
+func (d *Mongo) GetDownTimeDiff() string {
+	return util.TimeDifference(d.lastDownTime, time.Now().Format(util.YYMMDD))
 }
 
 // SetCheckInterval will set check interval to service

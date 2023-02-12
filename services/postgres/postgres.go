@@ -2,14 +2,18 @@ package postgres
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"log"
+	"time"
+
+	_ "github.com/lib/pq"
+	"github.com/telkomdev/tob/util"
 )
 
 // Postgres service
 type Postgres struct {
 	url           string
 	recovered     bool
+	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
@@ -104,6 +108,18 @@ func (d *Postgres) SetRecover(recovered bool) {
 // IsRecover will return recovered status
 func (d *Postgres) IsRecover() bool {
 	return d.recovered
+}
+
+// LastDownTime will set last down time of service to current time
+func (d *Postgres) SetLastDownTimeNow() {
+	if d.recovered {
+		d.lastDownTime = time.Now().Format(util.YYMMDD)
+	}
+}
+
+// GetDownTimeDiff will return down time service difference in minutes
+func (d *Postgres) GetDownTimeDiff() string {
+	return util.TimeDifference(d.lastDownTime, time.Now().Format(util.YYMMDD))
 }
 
 // SetCheckInterval will set check interval to service

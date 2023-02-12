@@ -70,7 +70,6 @@
         },
 
         "slack": {
-            "name": "BoyBot",
             "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
             "mentions": [
                 "@UXXXXXXXX",

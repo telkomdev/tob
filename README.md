@@ -9,6 +9,23 @@ A Notification Bot written in Go
 
 [<img src="./assets/tob_arch.PNG" width="600">](https://github.com/telkomdev/tob)
 
+### Screenshot
+<h4>Discord</h5>
+
+[<img src="./assets/discord_n.PNG" width="400">](https://github.com/telkomdev/tob)
+
+<h4>Email</h5>
+
+[<img src="./assets/email_n.PNG" width="400">](https://github.com/telkomdev/tob)
+
+<h4>Slack</h5>
+
+[<img src="./assets/slack_n.PNG" width="400">](https://github.com/telkomdev/tob)
+
+<h4>Telegram</h5>
+
+[<img src="./assets/telegram_n.PNG" width="400">](https://github.com/telkomdev/tob)
+
 ## Getting Started
 
 ### Install from release (https://github.com/telkomdev/tob/releases)

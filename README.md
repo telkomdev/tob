@@ -44,7 +44,7 @@ $ shasum -a 256 tob-1.0.0.darwin-amd64.tar.gz -c sha256sums.txt
 tob-1.0.0.darwin-amd64.tar.gz: OK
 ```
 
-You should be able to see that the checksum value for the file is valid, <mark>tob-1.0.0.linux-amd64.tar.gz: OK</mark> and <mark>tob-1.0.0.darwin-amd64.tar.gz: OK</mark>. 
+You should be able to see that the checksum value for the file is valid, `tob-1.0.0.linux-amd64.tar.gz: OK` and `tob-1.0.0.darwin-amd64.tar.gz: OK`. 
 Indicates the file is not damaged, not modified and safe to use.
 
 #### Extract

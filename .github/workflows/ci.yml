@@ -27,4 +27,4 @@ jobs:
         run: bash ./scripts/install_ubuntu_deps
 
       - name: Run packaging
-        run: bash ./scripts/package.sh
+        run: bash ./scripts/package.sh 0.0.0.dummy

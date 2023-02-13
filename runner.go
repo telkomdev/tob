@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/telkomdev/tob/config"
+	"github.com/telkomdev/tob/services/airflow"
 	"github.com/telkomdev/tob/services/dummy"
 	"github.com/telkomdev/tob/services/elasticsearch"
 	"github.com/telkomdev/tob/services/mongodb"
@@ -48,6 +49,8 @@ func NewRunner(notificators []Notificator, configs config.Config, verbose bool) 
 
 func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services := make(map[ServiceKind]Service)
+	services[Airflow] = airflow.NewAirflow(verbose, Logger)
+	services[AirflowFlower] = airflow.NewAirflowFlower(verbose, Logger)
 	services[Dummy] = dummy.NewDummy(verbose, Logger)
 	services[MongoDB] = mongodb.NewMongo(verbose, Logger)
 	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)

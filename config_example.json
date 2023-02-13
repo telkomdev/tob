@@ -56,7 +56,7 @@
             "enable": true
         }
     },
-    
+
     "notificator": {
         "discord": {
             "name": "BoyBot",

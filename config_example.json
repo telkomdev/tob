@@ -43,7 +43,7 @@
         },
 
         "elasticsearch_cluster_one": {
-            "kind": "web",
+            "kind": "elasticsearch",
             "url": "http://elastic:devpass@localhost:9200/_cluster/health?pretty",
             "checkInterval": 10,
             "enable": true

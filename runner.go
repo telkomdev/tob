@@ -10,6 +10,7 @@ import (
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/services/airflow"
 	"github.com/telkomdev/tob/services/dummy"
+	"github.com/telkomdev/tob/services/elasticsearch"
 	"github.com/telkomdev/tob/services/mongodb"
 	"github.com/telkomdev/tob/services/mysqldb"
 	"github.com/telkomdev/tob/services/postgres"
@@ -55,6 +56,7 @@ func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services[Postgresql] = postgres.NewPostgres(verbose, Logger)
 	services[Redis] = redisdb.NewRedis(verbose, Logger)
 	services[Web] = web.NewWeb(verbose, Logger)
+	services[Elasticsearch] = elasticsearch.NewElasticsearch(verbose, Logger)
 
 	s, ok := services[serviceKind]
 	return s, ok

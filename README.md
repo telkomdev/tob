@@ -201,6 +201,15 @@ The `tobToken` variable must be the same as the `tobToken` config located in the
 }
 ```
 
+
+`tob` will send a message/payload in the following form to the webhook endpoint that you have specified in the config above.
+
+```json
+{ 
+    "message": "mysql_cluster_1 is DOWN" 
+}
+```
+
 ### TODO
 
 - add Kafka service

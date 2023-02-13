@@ -28,21 +28,21 @@ A Notification Bot written in Go
 
 ## Getting Started
 
-### Install from release (https://github.com/telkomdev/tob/releases)
+### Install from the latest release (https://github.com/telkomdev/tob/releases)
 choose the binary from the release according to your platform, for example for the Linux platform
 
 #### Download binary
 
 ```shell
-$  wget https://github.com/telkomdev/tob/releases/download/1.0.0/tob-1.0.0.linux-amd64.tar.gz
+$  wget https://github.com/telkomdev/tob/releases/download/1.1.0/tob-1.1.0.linux-amd64.tar.gz
 ```
 
 #### Important !!!, always check the SHA256 Checksum before using it
 
-Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt
+Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.1.0/sha256sums.txt
 
 ```shell
-$ wget https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt
+$ wget https://github.com/telkomdev/tob/releases/download/1.1.0/sha256sums.txt
 ```
 
 #### Verify SHA256 Checksum
@@ -50,24 +50,24 @@ $ wget https://github.com/telkomdev/tob/releases/download/1.0.0/sha256sums.txt
 Linux
 
 ```shell
-$ sha256sum tob-1.0.0.linux-amd64.tar.gz -c sha256sums.txt
-tob-1.0.0.linux-amd64.tar.gz: OK
+$ sha256sum tob-1.1.0.linux-amd64.tar.gz -c sha256sums.txt
+tob-1.1.0.linux-amd64.tar.gz: OK
 ```
 
 Mac OSX
 
 ```shell
-$ shasum -a 256 tob-1.0.0.darwin-amd64.tar.gz -c sha256sums.txt
-tob-1.0.0.darwin-amd64.tar.gz: OK
+$ shasum -a 256 tob-1.1.0.darwin-amd64.tar.gz -c sha256sums.txt
+tob-1.1.0.darwin-amd64.tar.gz: OK
 ```
 
-You should be able to see that the checksum value for the file is valid, `tob-1.0.0.linux-amd64.tar.gz: OK` and `tob-1.0.0.darwin-amd64.tar.gz: OK`. 
+You should be able to see that the checksum value for the file is valid, `tob-1.1.0.linux-amd64.tar.gz: OK` and `tob-1.1.0.darwin-amd64.tar.gz: OK`. 
 Indicates the file is not damaged, not modified and safe to use.
 
 #### Extract
 
 ```shell
-$ tar -xvzf tob-1.0.0.linux-amd64.tar.gz
+$ tar -xvzf tob-1.1.0.linux-amd64.tar.gz
 ```
 
 #### Run

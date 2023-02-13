@@ -61,7 +61,7 @@ func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		if e.verbose {
-			e.logger.Println(fmt.Sprintf("cannot read parse JSON body: %v", err))
+			e.logger.Println(fmt.Sprintf("cannot parse JSON body: %v", err))
 		}
 
 		return cStatus, err

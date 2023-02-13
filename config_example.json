@@ -107,6 +107,12 @@
             "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
             "groupId": "-111111111",
             "enable": true
+        },
+
+        "webhook": {
+            "url": "https://api.yourcompany.com/v1/webhook/tob",
+            "tobToken": "tob-token-12345",
+            "enable": true
         }
     },
 

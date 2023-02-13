@@ -19,6 +19,9 @@ var (
 	// Redis service kind
 	Redis ServiceKind = "redis"
 
+	// Airflow service kind
+	Airflow ServiceKind = "airflow"
+
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
 )

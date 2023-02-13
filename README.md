@@ -101,6 +101,55 @@ Running `tob` with config file
 $ ./tob -c config.json
 ```
 
+### Service and Kind
+currently tob supports below `KIND` of services
+- **airflow**
+- **airflowflower**
+- **elasticsearch**
+- **mongodb**
+- **mysql**
+- **postgresql**
+- **redis**
+- **web**
+
+`KIND` represents one or many services. So you can monitor more than one service with the same `KIND`. For example, you can monitor multiple PostgreSQL instances. Or you can monitor multiple web applications.
+
+`checkInterval: in Seconds` is how often your service is called by tob.
+
+`enable` you set `true` when you want to monitor the service. Set it to `false`, if you don't want to monitor it.
+
+`config.json`
+
+```json
+"postgresql_one": {
+    "kind": "postgresql",
+    "url": "postgres://demo:12345@localhost:5432/demo?sslmode=disable",
+    "checkInterval": 10,
+    "enable": false
+},
+
+"postgresql_two": {
+    "kind": "postgresql",
+    "url": "postgres://demo:12345@localhost:5433/demo?sslmode=disable",
+    "checkInterval": 10,
+    "enable": false
+},
+
+"web_internal": {
+    "kind": "web",
+    "url": "https://portal.mycompany.com/health-check",
+    "checkInterval": 5,
+    "enable": true
+},
+
+"web_main_1": {
+    "kind": "web",
+    "url": "https://mycompany.com/health-check",
+    "checkInterval": 5,
+    "enable": true
+}
+```
+
 ### TODO
 
 - add Kafka service

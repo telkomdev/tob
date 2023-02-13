@@ -117,10 +117,6 @@ func (af *AirflowFlower) Ping() []byte {
 		return []byte("NOT_OK")
 	}
 
-	if af.verbose {
-		// af.logger.Println(fmt.Sprintf("airflow: scheduler (%s), metadatabase (%s)", af.schedulerStatus, af.metadatabaseStatus))
-	}
-
 	return []byte("OK")
 }
 

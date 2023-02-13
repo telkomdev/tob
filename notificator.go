@@ -7,6 +7,7 @@ import (
 	"github.com/telkomdev/tob/notificators/email"
 	"github.com/telkomdev/tob/notificators/slack"
 	"github.com/telkomdev/tob/notificators/telegram"
+	"github.com/telkomdev/tob/notificators/webhook"
 )
 
 // Notificator the notificator base
@@ -47,11 +48,18 @@ func InitNotificatorFactory(configs config.Config) ([]Notificator, error) {
 		return nil, err
 	}
 
+	// webhook notificator
+	webhookNotificator, err := webhook.NewWebhook(configs)
+	if err != nil {
+		return nil, err
+	}
+
 	notificators := []Notificator{
 		emailNotificator,
 		discordNotificator,
 		slackNotificator,
 		telegramNotificator,
+		webhookNotificator,
 	}
 
 	return notificators, nil

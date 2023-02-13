@@ -51,7 +51,14 @@
 
         "airflow_one": {
             "kind": "airflow",
-            "url": "https://localhost:8080/health",
+            "url": "http://localhost:8080/health",
+            "checkInterval": 10,
+            "enable": true
+        },
+
+        "airflow_flower_one": {
+            "kind": "airflowflower",
+            "url": "http://localhost:9090",
             "checkInterval": 10,
             "enable": true
         },

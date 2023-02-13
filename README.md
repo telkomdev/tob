@@ -73,7 +73,7 @@ $ tar -xvzf tob-1.1.0.linux-amd64.tar.gz
 #### Run
 
 ```shell
-$ ./tob -h
+$ ./tob -c config.json
 ```
 
 ### Build from source
@@ -158,7 +158,7 @@ Currently tob supports the following types of `Notificator`. `Notificator` is wh
 - **Email with SMTP**
 - **Slack (webhook)** https://api.slack.com/messaging/webhooks
 - **Telegram**
-- **Webhook** | For security reasons, your webhook must verify the HTTP header `x-tob-token` that is in every incoming http request.
+- **Webhook** | For security reasons, your `webhook endpoint` must verify the HTTP header: `x-tob-token` that is in every incoming http request.
 
 Example of `x-tob-token` webhook verification in nodejs application
 

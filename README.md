@@ -150,6 +150,47 @@ currently tob supports below `KIND` of services
 }
 ```
 
+### Notificator
+
+Currently tob supports the following types of `Notificator`. `Notificator` is where the tob will send notifications when one or more of the services you're monitoring have problems.
+
+- **Discord**
+- **Email with SMTP**
+- **Slack (webhook)** https://api.slack.com/messaging/webhooks
+- **Telegram**
+- **Webhook** | For security reasons, your webhook must verify the HTTP header `x-tob-token` that is in every incoming http request.
+
+Example of `x-tob-token` webhook verification in nodejs application
+
+```javascript
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+
+const PORT = 3001;
+
+const tobToken = "461b919e-1bf4-42db-a8ff-4f21633bbf10";
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/webhook/tob', (req, res) => {
+    const headers = req.headers;
+    const token = headers["x-tob-token"];
+    
+    const verifiedRequest = token === tobToken;
+    if (!verifiedRequest) {
+        return res.status(401).send({'message': 'token is not valid'});
+    }
+
+    console.log(req.body);
+
+    return res.status(200).send({'message': 'webbhook received'});
+});
+
+app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));
+```
+
 ### TODO
 
 - add Kafka service

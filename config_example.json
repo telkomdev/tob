@@ -49,6 +49,13 @@
             "enable": true
         },
 
+        "airflow_one": {
+            "kind": "airflow",
+            "url": "https://localhost:8080/health",
+            "checkInterval": 10,
+            "enable": true
+        },
+
         "dummy_one": {
             "kind": "dummy",
             "url": "https://minio-storage.com/minio/health/ready",

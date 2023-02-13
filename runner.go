@@ -185,7 +185,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					if notificator.IsEnabled() {
 						err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
 						if err != nil {
-							Logger.Println(err)
+							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
 						}
 					}
 				}
@@ -199,7 +199,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					if notificator.IsEnabled() {
 						err := notificator.Send(fmt.Sprintf("%s is UP. It was down for %s", n, s.GetDownTimeDiff()))
 						if err != nil {
-							Logger.Println(err)
+							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
 						}
 					}
 				}

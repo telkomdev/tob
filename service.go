@@ -25,6 +25,9 @@ var (
 	// Airflow service kind
 	Airflow ServiceKind = "airflow"
 
+	// Airflow flower service kind
+	AirflowFlower ServiceKind = "airflowflower"
+
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
 )

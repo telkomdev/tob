@@ -44,6 +44,7 @@ func (e *Elasticsearch) Name() string {
 	return "elasticsearch"
 }
 
+// checkClusterStatus checks the status of an Elasticsearch cluster by checking cluster index status.
 func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) {
 	cStatus := ""
 	body, err := ioutil.ReadAll(resp.Body)

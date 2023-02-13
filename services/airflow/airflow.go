@@ -47,6 +47,7 @@ func (a *Airflow) Name() string {
 	return "airflow"
 }
 
+// checkClusterStatus will check status of Airflow's metadatabase & scheduler
 func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

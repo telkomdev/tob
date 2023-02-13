@@ -57,7 +57,7 @@ func (af *AirflowFlower) checkWorkerStatus(resp *http.Response) error {
 
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { resp.Body.Close() }()
 
 	var data map[string][]map[string]interface{}
 	err = json.Unmarshal([]byte(body), &data)

@@ -56,7 +56,7 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { resp.Body.Close() }()
 
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)

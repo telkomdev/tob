@@ -55,7 +55,7 @@ func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) 
 
 		return cStatus, err
 	}
-	defer resp.Body.Close()
+	defer func() { resp.Body.Close() }()
 
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)

@@ -191,6 +191,16 @@ app.post('/webhook/tob', (req, res) => {
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));
 ```
 
+The `tobToken` variable must be the same as the `tobToken` config located in the `config.json` file
+
+```json
+"webhook": {
+    "url": "https://api.yourcompany.com/webhook/tob",
+    "tobToken": "461b919e-1bf4-42db-a8ff-4f21633bbf10",
+    "enable": true
+}
+```
+
 ### TODO
 
 - add Kafka service

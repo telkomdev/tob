@@ -27,7 +27,7 @@ type DiskStatus struct {
 }
 
 type target struct {
-	Status  bool                   `json:"status"`
+	Success bool                   `json:"success"`
 	Message string                 `json:"message"`
 	Data    map[string]interface{} `json:"data"`
 }

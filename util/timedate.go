@@ -16,12 +16,12 @@ const (
 func TimeDifference(timeFrom string, timeNow string) string {
 	parsedTimeFrom, err := time.Parse(YYMMDD, timeFrom)
 	if err != nil {
-		fmt.Printf("error: parsing time from: %v\n", err)
+		return fmt.Sprintf("%d minutes", 0)
 	}
 
 	parsedTimeNow, err := time.Parse(YYMMDD, timeNow)
 	if err != nil {
-		fmt.Printf("error: parsing time now: %v\n", err)
+		return fmt.Sprintf("%d minutes", 0)
 	}
 
 	diff := parsedTimeNow.Sub(parsedTimeFrom).Minutes()

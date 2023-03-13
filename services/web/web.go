@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
 )
@@ -127,6 +128,21 @@ func (d *Web) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *Web) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *Web) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *Web) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *Web) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

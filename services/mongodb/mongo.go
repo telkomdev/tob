@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -152,6 +153,21 @@ func (d *Mongo) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *Mongo) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *Mongo) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *Mongo) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *Mongo) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
 )
@@ -178,6 +179,21 @@ func (e *Elasticsearch) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (e *Elasticsearch) IsEnabled() bool {
 	return e.enabled
+}
+
+// SetMessage will set additional message
+func (e *Elasticsearch) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (e *Elasticsearch) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (e *Elasticsearch) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

@@ -1,5 +1,9 @@
 package tob
 
+import (
+	"github.com/telkomdev/tob/config"
+)
+
 // ServiceKind represent a type/kind of service
 type ServiceKind string
 
@@ -25,8 +29,11 @@ var (
 	// Airflow service kind
 	Airflow ServiceKind = "airflow"
 
-	// Airflow flower service kind
+	// AirflowFlower service kind
 	AirflowFlower ServiceKind = "airflowflower"
+
+	// DiskStatus service kind
+	DiskStatus ServiceKind = "diskstatus"
 
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
@@ -73,6 +80,15 @@ type Service interface {
 
 	// IsEnabled will return enable status
 	IsEnabled() bool
+
+	// SetMessage will set additional message
+	SetMessage(message string)
+
+	// GetMessage will return additional message
+	GetMessage() string
+
+	// SetConfig will set config
+	SetConfig(configs config.Config)
 
 	// Stop will receive stop channel
 	Stop() chan bool

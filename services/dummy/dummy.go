@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -112,6 +113,21 @@ func (d *Dummy) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *Dummy) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *Dummy) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *Dummy) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *Dummy) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

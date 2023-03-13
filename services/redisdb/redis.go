@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -162,6 +163,21 @@ func (d *Redis) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *Redis) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *Redis) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *Redis) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *Redis) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -140,6 +141,21 @@ func (d *MySQL) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *MySQL) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *MySQL) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *MySQL) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *MySQL) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -140,6 +141,21 @@ func (d *Postgres) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (d *Postgres) IsEnabled() bool {
 	return d.enabled
+}
+
+// SetMessage will set additional message
+func (d *Postgres) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (d *Postgres) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (d *Postgres) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

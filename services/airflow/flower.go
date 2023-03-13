@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
 )
@@ -183,6 +184,21 @@ func (af *AirflowFlower) Enable(enabled bool) {
 // IsEnabled will return enable status
 func (af *AirflowFlower) IsEnabled() bool {
 	return af.enabled
+}
+
+// SetMessage will set additional message
+func (af *AirflowFlower) SetMessage(message string) {
+
+}
+
+// GetMessage will return additional message
+func (af *AirflowFlower) GetMessage() string {
+	return ""
+}
+
+// SetConfig will set config
+func (f *AirflowFlower) SetConfig(configs config.Config) {
+
 }
 
 // Stop will receive stop channel

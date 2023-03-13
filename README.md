@@ -34,15 +34,15 @@ choose the binary from the release according to your platform, for example for t
 #### Download binary
 
 ```shell
-$  wget https://github.com/telkomdev/tob/releases/download/1.1.0/tob-1.1.0.linux-amd64.tar.gz
+$  wget https://github.com/telkomdev/tob/releases/download/1.2.0/tob-1.2.0.linux-amd64.tar.gz
 ```
 
 #### Important !!!, always check the SHA256 Checksum before using it
 
-Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.1.0/sha256sums.txt
+Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.2.0/sha256sums.txt
 
 ```shell
-$ wget https://github.com/telkomdev/tob/releases/download/1.1.0/sha256sums.txt
+$ wget https://github.com/telkomdev/tob/releases/download/1.2.0/sha256sums.txt
 ```
 
 #### Verify SHA256 Checksum
@@ -50,24 +50,24 @@ $ wget https://github.com/telkomdev/tob/releases/download/1.1.0/sha256sums.txt
 Linux
 
 ```shell
-$ sha256sum tob-1.1.0.linux-amd64.tar.gz -c sha256sums.txt
-tob-1.1.0.linux-amd64.tar.gz: OK
+$ sha256sum tob-1.2.0.linux-amd64.tar.gz -c sha256sums.txt
+tob-1.2.0.linux-amd64.tar.gz: OK
 ```
 
 Mac OSX
 
 ```shell
-$ shasum -a 256 tob-1.1.0.darwin-amd64.tar.gz -c sha256sums.txt
-tob-1.1.0.darwin-amd64.tar.gz: OK
+$ shasum -a 256 tob-1.2.0.darwin-amd64.tar.gz -c sha256sums.txt
+tob-1.2.0.darwin-amd64.tar.gz: OK
 ```
 
-You should be able to see that the checksum value for the file is valid, `tob-1.1.0.linux-amd64.tar.gz: OK` and `tob-1.1.0.darwin-amd64.tar.gz: OK`. 
+You should be able to see that the checksum value for the file is valid, `tob-1.2.0.linux-amd64.tar.gz: OK` and `tob-1.2.0.darwin-amd64.tar.gz: OK`. 
 Indicates the file is not damaged, not modified and safe to use.
 
 #### Extract
 
 ```shell
-$ tar -xvzf tob-1.1.0.linux-amd64.tar.gz
+$ tar -xvzf tob-1.2.0.linux-amd64.tar.gz
 ```
 
 #### Run
@@ -111,6 +111,7 @@ currently tob supports below `KIND` of services
 - **postgresql**
 - **redis**
 - **web**
+- **diskstatus**
 
 `KIND` represents one or many services. So you can monitor more than one service with the same `KIND`. For example, you can monitor multiple PostgreSQL instances. Or you can monitor multiple web applications.
 
@@ -146,6 +147,108 @@ currently tob supports below `KIND` of services
     "kind": "web",
     "url": "https://mycompany.com/health-check",
     "checkInterval": 5,
+    "enable": true
+}
+```
+
+### Disk Status Monitoring
+
+To monitor `Disk Status` on a Server Computer, `tob` requires a special `agent` that can be called by `tob`. 
+So we need to deploy an `agent`, in this case `tob-http-agent` to the Server Computer whose `Disk Status` we need to monitor.
+
+#### Download `tob-http-agent` binary
+
+```shell
+$  wget https://github.com/telkomdev/tob/releases/download/1.2.0/tob-http-agent-1.0.0.linux-amd64.tar.gz
+```
+
+#### Important !!!, always check the SHA256 Checksum before using it
+
+Download `tob-http-agent-sha256sums.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.2.0/tob-http-agent-sha256sums.txt
+
+```shell
+$ wget https://github.com/telkomdev/tob/releases/download/1.2.0/tob-http-agent-sha256sums.txt
+```
+
+#### Verify `tob-http-agent` SHA256 Checksum
+
+Linux
+
+```shell
+$ sha256sum tob-http-agent-1.0.0.linux-amd64.tar.gz -c tob-http-agent-sha256sums.txt
+tob-http-agent-1.0.0.linux-amd64.tar.gz: OK
+```
+
+#### Extract `tob-http-agent`
+
+```shell
+$ tar -xvzf tob-http-agent-1.0.0.linux-amd64.tar.gz
+```
+
+#### Run `tob-http-agent` as a daemon with `systemd`
+
+Create `tob-http-agent.service` `systemd` unit service
+```shell
+$ sudo vi /etc/systemd/system/tob-http-agent.service
+```
+
+Copy content from this file to the `/etc/systemd/system/tob-http-agent.service` and save
+```
+https://github.com/telkomdev/tob/blob/master/deployments/systemd/tob-http-agent.service
+```
+
+Reload `systemd daemon`
+```shell
+$ sudo systemctl daemon-reload
+```
+
+Start `tob-http-agent` service
+```shell
+$ sudo systemctl start tob-http-agent
+```
+
+Check if its running
+```shell
+$ sudo systemctl status tob-http-agent
+```
+
+#### Expose `tob-http-agent` service with `nginx`
+
+Create `tob-http-agent.conf`
+```shell
+$ sudo vi /etc/nginx/sites-available/tob-http-agent.conf
+```
+
+Copy content from this file to the `/etc/nginx/sites-available/tob-http-agent.conf` and save
+```
+https://github.com/telkomdev/tob/blob/master/deployments/nginx/tob-http-agent-nginx.conf
+```
+
+Create `/etc/nginx/sites-available/tob-http-agent.conf` symlink
+```shell
+$ sudo ln -s /etc/nginx/sites-available/tob-http-agent.conf /etc/nginx/sites-enabled/
+```
+
+Make sure the `nginx` configuration is not error
+```shell
+$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+Restart `nginx`
+```shell
+$  sudo systemctl restart nginx
+```
+
+#### Add `diskstatus` config to the `tob` service config
+
+```json
+"ubuntu_1_storage_status": {
+    "kind": "diskstatus",
+    "url": "http://tob-http-agent.yourdomain.com",
+    "checkInterval": 5,
+    "thresholdDiskUsage": 90,
     "enable": true
 }
 ```

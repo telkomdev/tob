@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/telkomdev/tob"
+	"github.com/telkomdev/tob/util"
 )
 
 const (
@@ -133,60 +134,6 @@ func loggerMiddleware(next http.Handler) http.HandlerFunc {
 	}
 }
 
-func interfaceToFloat64(val interface{}) float64 {
-
-	var i float64
-	switch t := val.(type) {
-	case int:
-		i = float64(t)
-		break
-	case int8:
-		i = float64(t)
-		break
-	case int16:
-		i = float64(t)
-		break
-	case int32:
-		i = float64(t)
-		break
-	case int64:
-		i = float64(t)
-		break
-	case float32:
-		i = float64(t)
-		break
-	case float64:
-		i = float64(t)
-		break
-	case uint8:
-		i = float64(t)
-		break
-	case uint16:
-		i = float64(t)
-		break
-	case uint32:
-		i = float64(t)
-		break
-	case uint64:
-		i = float64(t)
-		break
-	case string:
-		num, err := strconv.Atoi(t)
-		if err != nil {
-			return 0.0
-		}
-
-		i = float64(num)
-		break
-	default:
-		i = 0.0
-	}
-
-	tob.Logger.Println(i)
-
-	return i
-}
-
 func checkDiskStatus() (map[string]interface{}, func() error, error) {
 	dfPath, err := exec.LookPath("df")
 	if err != nil {
@@ -276,9 +223,9 @@ func checkDiskStatus() (map[string]interface{}, func() error, error) {
 
 		}
 
-		usedFloat64 := interfaceToFloat64(jsonMap["used"])
+		usedFloat64 := util.InterfaceToFloat64(jsonMap["used"])
 
-		availableFloat64 := interfaceToFloat64(jsonMap["available"])
+		availableFloat64 := util.InterfaceToFloat64(jsonMap["available"])
 
 		var diskUsed float64
 		if usedFloat64 > 0 {

@@ -103,11 +103,13 @@ func (d *DiskStatus) Ping() []byte {
 	}
 
 	if diskUsed >= thresholdDiskUsage {
-		d.SetMessage(fmt.Sprintf("disk used exceeds the threshold\nthreshold: %d%s\ndisk used: %d%s", int(thresholdDiskUsage), "%", int(diskUsed), "%"))
+		d.SetMessage(fmt.Sprintf("disk used exceeds the threshold\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
+			int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
 		return []byte("NOT_OK")
 	}
 
-	d.SetMessage(fmt.Sprintf("disk storage has been increased\nthreshold: %d%s\ndisk used: %d%s", int(thresholdDiskUsage), "%", int(diskUsed), "%"))
+	d.SetMessage(fmt.Sprintf("disk storage has been increased\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
+		int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
 	return []byte("OK")
 }
 

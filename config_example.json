@@ -68,6 +68,14 @@
             "url": "https://minio-storage.com/minio/health/ready",
             "checkInterval": 5,
             "enable": true
+        },
+
+        "server_1_storage_status": {
+            "kind": "diskstatus",
+            "url": "http://192.168.1.4:9113",
+            "checkInterval": 5,
+            "thresholdDiskUsage": 5,
+            "enable": true
         }
     },
 

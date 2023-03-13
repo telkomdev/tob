@@ -9,6 +9,7 @@ import (
 
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/services/airflow"
+	"github.com/telkomdev/tob/services/diskstatus"
 	"github.com/telkomdev/tob/services/dummy"
 	"github.com/telkomdev/tob/services/elasticsearch"
 	"github.com/telkomdev/tob/services/mongodb"
@@ -52,6 +53,7 @@ func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services[Airflow] = airflow.NewAirflow(verbose, Logger)
 	services[AirflowFlower] = airflow.NewAirflowFlower(verbose, Logger)
 	services[Dummy] = dummy.NewDummy(verbose, Logger)
+	services[DiskStatus] = diskstatus.NewDiskStatus(verbose, Logger)
 	services[MongoDB] = mongodb.NewMongo(verbose, Logger)
 	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)
 	services[Postgresql] = postgres.NewPostgres(verbose, Logger)
@@ -136,6 +138,7 @@ func (r *Runner) InitServices() error {
 			service.SetURL(urlStr)
 			service.SetCheckInterval(checkInterval)
 			service.Enable(serviceEnabled)
+			service.SetConfig(conf)
 
 			err = service.Connect()
 			if err != nil {
@@ -181,9 +184,14 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 				// set recover to false
 				s.SetRecover(false)
 
+				notificatorMessage := fmt.Sprintf("%s is DOWN", n)
+				if s.GetMessage() != "" {
+					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
+				}
+
 				for _, notificator := range notificators {
 					if notificator.IsEnabled() {
-						err := notificator.Send(fmt.Sprintf("%s is DOWN", n))
+						err := notificator.Send(notificatorMessage)
 						if err != nil {
 							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
 						}
@@ -195,9 +203,14 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 				// set recover to true
 				s.SetRecover(true)
 
+				notificatorMessage := fmt.Sprintf("%s is UP. It was down for %s", n, s.GetDownTimeDiff())
+				if s.GetMessage() != "" {
+					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
+				}
+
 				for _, notificator := range notificators {
 					if notificator.IsEnabled() {
-						err := notificator.Send(fmt.Sprintf("%s is UP. It was down for %s", n, s.GetDownTimeDiff()))
+						err := notificator.Send(notificatorMessage)
 						if err != nil {
 							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
 						}

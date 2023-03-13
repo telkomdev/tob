@@ -1,0 +1,15 @@
+[Unit]
+Description=tob-http-agent service
+Documentation=https://github.com/telkomdev/tob/blob/master/README.md
+After=network.target
+
+[Service]
+Type=simple
+User=vagrant
+ExecStart=/home/vagrant/tob/tob-http-agent
+StandardOutput=file:/var/log/tob-http-agent.log
+StandardError=file:/var/log/tob-http-agent-error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

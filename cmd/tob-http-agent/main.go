@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -16,28 +18,53 @@ import (
 )
 
 const (
+	// DefaultPort default port for tob-http-agent
 	DefaultPort = 9113
+
+	// Version current version for tob-http-agent
+	Version = "1.0.0"
 )
 
 func main() {
-	var port uint16
-	portStr := os.Getenv("HTTP_PORT")
-	if portStr != "" {
-		p, err := strconv.Atoi(portStr)
-		if err != nil {
-			port = uint16(DefaultPort)
-		} else {
-			port = uint16(p)
-		}
-	} else {
-		port = uint16(DefaultPort)
+
+	var (
+		httpPort    int
+		showVersion bool
+		verbose     bool
+	)
+
+	flag.IntVar(&httpPort, "port", DefaultPort, "HTTP Port (eg: 9113)")
+	flag.BoolVar(&showVersion, "version", false, "show version")
+	flag.BoolVar(&showVersion, "v", false, "show version")
+	flag.BoolVar(&verbose, "V", true, "verbose mode (if true log will appear otherwise no)")
+
+	flag.Usage = func() {
+		fmt.Println()
+		fmt.Println("Usage: ")
+		fmt.Println("tob-http-agent -[options]")
+		fmt.Println()
+		fmt.Println("tob-http-agent -port 9113")
+		fmt.Println()
+		fmt.Println("-h | -help (show help)")
+		fmt.Println("-v | -version (show version)")
+		fmt.Println("-V : verbose mode")
+		fmt.Println("---------------------------")
+		fmt.Println()
+	}
+
+	flag.Parse()
+
+	// show version
+	if showVersion {
+		fmt.Printf("%s version %s (runtime: %s)\n", os.Args[0], Version, runtime.Version())
+		os.Exit(0)
 	}
 
 	http.HandleFunc("/", loggerMiddleware(indexHandler()))
 	http.HandleFunc("/check-disk", loggerMiddleware(checkStorageHandler()))
 
-	tob.Logger.Printf("webapp running on port :%d\n", port)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	tob.Logger.Printf("webapp running on port :%d\n", httpPort)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", httpPort), nil)
 	if err != nil {
 		tob.Logger.Println(err)
 		os.Exit(1)

@@ -67,7 +67,7 @@ func (d *Kafka) Ping() []byte {
 
 	// if the reply length is not the same as brokerSize,
 	// then there is an indication that the Kafka Cluster is experiencing problems
-	if len(reply) != d.brokerSize {
+	if len(reply) < d.brokerSize {
 		return []byte("NOT_OK")
 	}
 

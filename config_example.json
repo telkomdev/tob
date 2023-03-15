@@ -49,6 +49,13 @@
             "enable": true
         },
 
+        "kafka_cluster_one": {
+            "kind": "kafka",
+            "url": "http://myname:mypassword@10.1.1.1:9093,10.1.1.2:9093,10.1.1.3:9093",
+            "checkInterval": 5,
+            "enable": true
+        },
+
         "airflow_one": {
             "kind": "airflow",
             "url": "http://localhost:8080/health",

@@ -13,6 +13,11 @@ import (
 	"github.com/telkomdev/tob/util"
 )
 
+const (
+	// ErrorClosedNetwork is an error indicating the connection is closed
+	ErrorClosedNetwork = "use of closed network connection"
+)
+
 // Kafka service
 type Kafka struct {
 	url           string
@@ -57,6 +62,16 @@ func (d *Kafka) Ping() []byte {
 		if d.verbose {
 			d.logger.Println("Kafka error read available brokers")
 			d.logger.Println(err)
+
+			// re dial
+			if strings.Contains(err.Error(), ErrorClosedNetwork) {
+				d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
+				// re dial ignore error
+				err = d.dial()
+				if err != nil {
+					d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
+				}
+			}
 		}
 		return []byte("NOT_OK")
 	}
@@ -83,8 +98,7 @@ func (d *Kafka) SetURL(url string) {
 	d.url = url
 }
 
-// Connect to service if needed
-func (d *Kafka) Connect() error {
+func (d *Kafka) dial() error {
 	if d.verbose {
 		d.logger.Println("connecting to Kafka server")
 	}
@@ -145,6 +159,11 @@ func (d *Kafka) Connect() error {
 	}
 
 	return nil
+}
+
+// Connect to service if needed
+func (d *Kafka) Connect() error {
+	return d.dial()
 }
 
 // Close will close the service resources if needed

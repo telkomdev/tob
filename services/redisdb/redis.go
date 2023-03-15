@@ -51,6 +51,10 @@ func (d *Redis) Ping() []byte {
 
 	reply := d.client.Ping(context.Background())
 	if reply.Err() != nil {
+		if d.verbose {
+			d.logger.Println("Redis error")
+			d.logger.Println(reply.Err())
+		}
 		return []byte("NOT_OK")
 	}
 

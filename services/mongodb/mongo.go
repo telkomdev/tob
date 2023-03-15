@@ -50,6 +50,10 @@ func (d *Mongo) Ping() []byte {
 	}
 
 	if err := d.client.Ping(context.Background(), nil); err != nil {
+		if d.verbose {
+			d.logger.Println("MongoDB error")
+			d.logger.Println(err)
+		}
 		return []byte("NOT_OK")
 	}
 

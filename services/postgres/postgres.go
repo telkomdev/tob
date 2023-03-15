@@ -49,6 +49,10 @@ func (d *Postgres) Ping() []byte {
 	}
 
 	if err := d.db.Ping(); err != nil {
+		if d.verbose {
+			d.logger.Println("Postgre error")
+			d.logger.Println(err)
+		}
 		return []byte("NOT_OK")
 	}
 

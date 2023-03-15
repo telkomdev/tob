@@ -54,6 +54,10 @@ func (d *Kafka) Ping() []byte {
 
 	reply, err := d.client.Brokers()
 	if err != nil {
+		if d.verbose {
+			d.logger.Println("Kafka error read available brokers")
+			d.logger.Println(err)
+		}
 		return []byte("NOT_OK")
 	}
 

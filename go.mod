@@ -6,6 +6,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/lib/pq v1.10.7
 	github.com/redis/go-redis/v9 v9.0.2
+	github.com/segmentio/kafka-go v0.4.39
 	go.mongodb.org/mongo-driver v1.11.1
 )
 
@@ -17,7 +18,6 @@ require (
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/segmentio/kafka-go v0.4.39 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect

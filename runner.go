@@ -12,6 +12,7 @@ import (
 	"github.com/telkomdev/tob/services/diskstatus"
 	"github.com/telkomdev/tob/services/dummy"
 	"github.com/telkomdev/tob/services/elasticsearch"
+	"github.com/telkomdev/tob/services/kafka"
 	"github.com/telkomdev/tob/services/mongodb"
 	"github.com/telkomdev/tob/services/mysqldb"
 	"github.com/telkomdev/tob/services/postgres"
@@ -54,6 +55,7 @@ func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services[AirflowFlower] = airflow.NewAirflowFlower(verbose, Logger)
 	services[Dummy] = dummy.NewDummy(verbose, Logger)
 	services[DiskStatus] = diskstatus.NewDiskStatus(verbose, Logger)
+	services[Kafka] = kafka.NewKafka(verbose, Logger)
 	services[MongoDB] = mongodb.NewMongo(verbose, Logger)
 	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)
 	services[Postgresql] = postgres.NewPostgres(verbose, Logger)

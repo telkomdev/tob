@@ -35,6 +35,9 @@ var (
 	// DiskStatus service kind
 	DiskStatus ServiceKind = "diskstatus"
 
+	// Kafka servie kind
+	Kafka ServiceKind = "kafka"
+
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
 )

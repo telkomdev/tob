@@ -312,7 +312,3 @@ The `tobToken` variable must be the same as the `tobToken` config located in the
     "message": "mysql_cluster_1 is DOWN" 
 }
 ```
-
-### TODO
-
-- add Kafka service

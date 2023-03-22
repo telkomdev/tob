@@ -4,6 +4,7 @@ import (
 	"strconv"
 )
 
+// InterfaceToFloat64 will convert any interface value to float64
 func InterfaceToFloat64(val interface{}) float64 {
 
 	var i float64

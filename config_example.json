@@ -56,6 +56,13 @@
             "enable": true
         },
 
+        "kafka_local": {
+            "kind": "kafka",
+            "url": "kafka://127.0.0.1:9092",
+            "checkInterval": 5,
+            "enable": true
+        },
+
         "airflow_one": {
             "kind": "airflow",
             "url": "http://localhost:8080/health",

@@ -62,15 +62,15 @@ func (d *Kafka) Ping() []byte {
 		if d.verbose {
 			d.logger.Println("Kafka error read available brokers")
 			d.logger.Println(err)
+		}
 
-			// re dial
-			if strings.Contains(err.Error(), ErrorClosedNetwork) {
+		// re dial
+		if strings.Contains(err.Error(), ErrorClosedNetwork) {
+			d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
+			// re dial ignore error
+			err = d.dial()
+			if err != nil {
 				d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
-				// re dial ignore error
-				err = d.dial()
-				if err != nil {
-					d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
-				}
 			}
 		}
 		return []byte("NOT_OK")

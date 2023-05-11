@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
+	"net/url"
 	"time"
 
 	"github.com/telkomdev/tob/config"
@@ -51,6 +53,37 @@ func (d *DiskStatus) Name() string {
 	return "diskstatus"
 }
 
+// Resolve hostname to IPv4 address
+func (d *DiskStatus) resolveIPv4() string {
+	ipv4 := "N/A"
+
+	hostUrl, err := url.Parse(d.url)
+	if err != nil {
+		if d.verbose {
+			d.logger.Println(err)
+		}
+		return ipv4
+	}
+	hostname := hostUrl.Hostname()
+
+	ips, err := net.LookupIP(hostname)
+	if err != nil {
+		if d.verbose {
+			d.logger.Println(err)
+		}
+		return ipv4
+	}
+
+	for _, ip := range ips {
+		if ip.To4() != nil {
+			ipv4 = ip.String()
+			break
+		}
+	}
+
+	return ipv4
+}
+
 // Ping will try to ping the service
 func (d *DiskStatus) Ping() []byte {
 	resp, err := httpx.HTTPGet(fmt.Sprintf("%s/check-disk", d.url), nil, 5)
@@ -96,20 +129,23 @@ func (d *DiskStatus) Ping() []byte {
 	diskUsed := util.InterfaceToFloat64(target.Data["diskUsed"])
 	filesystem := target.Data["filesystem"]
 
+	ipv4 := d.resolveIPv4()
+
 	if d.verbose {
+		d.logger.Println("IP :", ipv4)
 		d.logger.Println("threshold disk usage: ", thresholdDiskUsage)
 		d.logger.Println("disk used: ", diskUsed)
 		d.logger.Println("file system: ", filesystem)
 	}
 
 	if diskUsed >= thresholdDiskUsage {
-		d.SetMessage(fmt.Sprintf("disk used exceeds the threshold\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
-			int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
+		d.SetMessage(fmt.Sprintf("disk used exceeds the threshold\nIP: %s\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
+			ipv4, int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
 		return []byte("NOT_OK")
 	}
 
-	d.SetMessage(fmt.Sprintf("disk storage has been increased\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
-		int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
+	d.SetMessage(fmt.Sprintf("disk storage has been increased\nIP: %s\nthreshold: %d%s\ndisk used: %d%s\nfile system: %s\n%s",
+		ipv4, int(thresholdDiskUsage), "%", int(diskUsed), "%", filesystem, "-------------------------------------"))
 	return []byte("OK")
 }
 

@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
+	"io"
+	"log"
 	"strings"
 )
 
@@ -23,8 +25,8 @@ type DiscordResponse struct {
 	Message string `json:"message"`
 }
 
-// Discord represent discord notificator
-type Discord struct {
+// DiscordConfig represent discord config
+type DiscordConfig struct {
 	threadURL string
 	name      string
 	avatarURL string
@@ -33,8 +35,15 @@ type Discord struct {
 	enabled   bool
 }
 
+// Discord represent discord notificator
+type Discord struct {
+	configs []DiscordConfig
+	logger  *log.Logger
+	verbose bool
+}
+
 // NewDiscord Discord's constructor
-func NewDiscord(configs config.Config) (*Discord, error) {
+func NewDiscord(configs config.Config, verbose bool, logger *log.Logger) (*Discord, error) {
 	notificatorConfigInterface, ok := configs["notificator"]
 	if !ok {
 		return nil, errors.New("error: cannot find notificator field in the config file")
@@ -42,58 +51,73 @@ func NewDiscord(configs config.Config) (*Discord, error) {
 
 	notificatorConfig := notificatorConfigInterface.(map[string]interface{})
 
-	discordConfigInterface, ok := notificatorConfig["discord"]
+	discordConfigInterfaces, ok := notificatorConfig["discord"]
 	if !ok {
 		return nil, errors.New("error: cannot find discord field in the config file")
 	}
 
-	discordConfig := discordConfigInterface.(map[string]interface{})
-
-	name, ok := discordConfig["name"].(string)
-	if !ok {
-		return nil, errors.New("error: cannot find discord name field in the config file")
-	}
-
-	threadURL, ok := discordConfig["url"].(string)
-	if !ok {
-		return nil, errors.New("error: cannot find discord url field in the config file")
-	}
-
-	avatarURL, ok := discordConfig["avatarUrl"].(string)
-	if !ok {
-		return nil, errors.New("error: cannot find discord avatarUrl field in the config file")
-	}
-
-	mentionsInterface, ok := discordConfig["mentions"].([]interface{})
-	if !ok {
-		return nil, errors.New("error: cannot find discord mentions field in the config file")
-	}
-
-	var mentions []string
-	for _, mentionInterface := range mentionsInterface {
-		mention, ok := mentionInterface.(string)
+	var discordConfigs []DiscordConfig
+	discordConfigList := discordConfigInterfaces.([]interface{})
+	for _, discordConfigInterface := range discordConfigList {
+		discordConfig, ok := discordConfigInterface.(map[string]interface{})
 		if !ok {
-			return nil, errors.New("error: mention field is not valid string")
+			return nil, errors.New("error: discord config is not valid")
 		}
 
-		mentions = append(mentions, mention)
-	}
+		name, ok := discordConfig["name"].(string)
+		if !ok {
+			return nil, errors.New("error: cannot find discord name field in the config file")
+		}
 
-	enabled, ok := discordConfig["enable"].(bool)
-	if !ok {
-		return nil, errors.New("error: cannot find discord enable field in the config file")
-	}
+		threadURL, ok := discordConfig["url"].(string)
+		if !ok {
+			return nil, errors.New("error: cannot find discord url field in the config file")
+		}
 
-	headers := make(map[string]string)
-	headers["Content-Type"] = "application/json"
+		avatarURL, ok := discordConfig["avatarUrl"].(string)
+		if !ok {
+			return nil, errors.New("error: cannot find discord avatarUrl field in the config file")
+		}
+
+		mentionsInterface, ok := discordConfig["mentions"].([]interface{})
+		if !ok {
+			return nil, errors.New("error: cannot find discord mentions field in the config file")
+		}
+
+		var mentions []string
+		for _, mentionInterface := range mentionsInterface {
+			mention, ok := mentionInterface.(string)
+			if !ok {
+				return nil, errors.New("error: mention field is not valid string")
+			}
+
+			mentions = append(mentions, mention)
+		}
+
+		enabled, ok := discordConfig["enable"].(bool)
+		if !ok {
+			return nil, errors.New("error: cannot find discord enable field in the config file")
+		}
+
+		headers := make(map[string]string)
+		headers["Content-Type"] = "application/json"
+
+		conf := DiscordConfig{
+			name:      name,
+			threadURL: threadURL,
+			avatarURL: avatarURL,
+			enabled:   enabled,
+			headers:   headers,
+			mentions:  mentions,
+		}
+
+		discordConfigs = append(discordConfigs, conf)
+	}
 
 	return &Discord{
-		name:      name,
-		threadURL: threadURL,
-		avatarURL: avatarURL,
-		enabled:   enabled,
-		headers:   headers,
-		mentions:  mentions,
+		configs: discordConfigs,
+		logger:  logger,
+		verbose: verbose,
 	}, nil
 }
 
@@ -104,38 +128,46 @@ func (d *Discord) Provider() string {
 
 // Send will send notification
 func (d *Discord) Send(msg string) error {
-	var messageBuilder strings.Builder
+	for _, conf := range d.configs {
+		if conf.enabled {
+			var messageBuilder strings.Builder
 
-	messageBuilder.WriteString("Hey ")
-	for _, mention := range d.mentions {
-		if strings.Contains(mention, "here") {
-			messageBuilder.WriteString(fmt.Sprintf("%s", mention))
-		} else {
-			messageBuilder.WriteString(fmt.Sprintf("<%s>", mention))
+			messageBuilder.WriteString("Hey ")
+			for _, mention := range conf.mentions {
+				if strings.Contains(mention, "here") {
+					messageBuilder.WriteString(fmt.Sprintf("%s", mention))
+				} else {
+					messageBuilder.WriteString(fmt.Sprintf("<%s>", mention))
+				}
+
+				messageBuilder.WriteString(", ")
+			}
+
+			messageBuilder.WriteString(" ")
+			messageBuilder.WriteString(msg)
+
+			content := messageBuilder.String()
+
+			discordMessage := DiscordMessage{
+				Username:  conf.name,
+				AvatarURL: conf.avatarURL,
+				Content:   content,
+			}
+
+			messageJSON, err := json.Marshal(discordMessage)
+			if err != nil {
+				return err
+			}
+
+			go func(threadURL string, body io.Reader, headers map[string]string, timeout int) {
+				_, err = httpx.HTTPPost(threadURL, body, headers, timeout)
+				if err != nil {
+					if d.verbose {
+						d.logger.Println(err)
+					}
+				}
+			}(conf.threadURL, bytes.NewBuffer(messageJSON), conf.headers, 5)
 		}
-
-		messageBuilder.WriteString(", ")
-	}
-
-	messageBuilder.WriteString(" ")
-	messageBuilder.WriteString(msg)
-
-	msg = messageBuilder.String()
-
-	discordMessage := DiscordMessage{
-		Username:  d.name,
-		AvatarURL: d.avatarURL,
-		Content:   msg,
-	}
-
-	messageJSON, err := json.Marshal(discordMessage)
-	if err != nil {
-		return err
-	}
-
-	_, err = httpx.HTTPPost(d.threadURL, bytes.NewBuffer(messageJSON), d.headers, 5)
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -143,5 +175,12 @@ func (d *Discord) Send(msg string) error {
 
 // IsEnabled will return enable status
 func (d *Discord) IsEnabled() bool {
-	return d.enabled
+	if len(d.configs) > 0 {
+		temp := d.configs[0].enabled
+		for _, conf := range d.configs {
+			temp = temp || conf.enabled
+		}
+		return temp
+	}
+	return false
 }

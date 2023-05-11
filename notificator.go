@@ -23,9 +23,9 @@ type Notificator interface {
 }
 
 // InitNotificatorFactory will init all notificator
-func InitNotificatorFactory(configs config.Config) ([]Notificator, error) {
+func InitNotificatorFactory(configs config.Config, verbose bool) ([]Notificator, error) {
 	// discord notificator
-	discordNotificator, err := discord.NewDiscord(configs)
+	discordNotificator, err := discord.NewDiscord(configs, verbose, Logger)
 	if err != nil {
 		return nil, err
 	}

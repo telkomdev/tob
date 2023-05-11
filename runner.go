@@ -142,6 +142,9 @@ func (r *Runner) InitServices() error {
 			service.Enable(serviceEnabled)
 			service.SetConfig(conf)
 
+			// by default service is recovered
+			service.SetRecover(true)
+
 			err = service.Connect()
 			if err != nil {
 				return err

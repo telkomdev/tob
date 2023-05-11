@@ -45,7 +45,7 @@ func main() {
 	}
 
 	// init Notificator
-	notificators, err := tob.InitNotificatorFactory(configs)
+	notificators, err := tob.InitNotificatorFactory(configs, args.Verbose)
 	if err != nil {
 		fmt.Println("error: ", err)
 		os.Exit(1)

@@ -25,7 +25,7 @@ const (
 	DefaultPort = 9113
 
 	// Version current version for tob-http-agent
-	Version = "1.0.0"
+	Version = "1.1.0"
 )
 
 func main() {

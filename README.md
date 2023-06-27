@@ -34,15 +34,15 @@ choose the binary from the release according to your platform, for example for t
 #### Download binary
 
 ```shell
-$  wget https://github.com/telkomdev/tob/releases/download/1.4.1/tob-1.4.1.linux-amd64.tar.gz
+$  wget https://github.com/telkomdev/tob/releases/download/1.4.2/tob-1.4.2.linux-amd64.tar.gz
 ```
 
 #### Important !!!, always check the SHA256 Checksum before using it
 
-Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.4.1/sha256sums.txt
+Download `sha256sum.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.4.2/sha256sums.txt
 
 ```shell
-$ wget https://github.com/telkomdev/tob/releases/download/1.4.1/sha256sums.txt
+$ wget https://github.com/telkomdev/tob/releases/download/1.4.2/sha256sums.txt
 ```
 
 #### Verify SHA256 Checksum
@@ -50,24 +50,24 @@ $ wget https://github.com/telkomdev/tob/releases/download/1.4.1/sha256sums.txt
 Linux
 
 ```shell
-$ sha256sum tob-1.4.1.linux-amd64.tar.gz -c sha256sums.txt
-tob-1.4.1.linux-amd64.tar.gz: OK
+$ sha256sum tob-1.4.2.linux-amd64.tar.gz -c sha256sums.txt
+tob-1.4.2.linux-amd64.tar.gz: OK
 ```
 
 Mac OSX
 
 ```shell
-$ shasum -a 256 tob-1.4.1.darwin-amd64.tar.gz -c sha256sums.txt
-tob-1.4.1.darwin-amd64.tar.gz: OK
+$ shasum -a 256 tob-1.4.2.darwin-amd64.tar.gz -c sha256sums.txt
+tob-1.4.2.darwin-amd64.tar.gz: OK
 ```
 
-You should be able to see that the checksum value for the file is valid, `tob-1.4.1.linux-amd64.tar.gz: OK` and `tob-1.4.1.darwin-amd64.tar.gz: OK`. 
+You should be able to see that the checksum value for the file is valid, `tob-1.4.2.linux-amd64.tar.gz: OK` and `tob-1.4.2.darwin-amd64.tar.gz: OK`. 
 Indicates the file is not damaged, not modified and safe to use.
 
 #### Extract
 
 ```shell
-$ tar -xvzf tob-1.4.1.linux-amd64.tar.gz
+$ tar -xvzf tob-1.4.2.linux-amd64.tar.gz
 ```
 
 #### Run
@@ -160,15 +160,15 @@ So we need to deploy an `agent`, in this case `tob-http-agent` to the Server Com
 #### Download `tob-http-agent` binary
 
 ```shell
-$  wget https://github.com/telkomdev/tob/releases/download/1.4.1/tob-http-agent-1.0.0.linux-amd64.tar.gz
+$  wget https://github.com/telkomdev/tob/releases/download/1.4.2/tob-http-agent-1.1.0.linux-amd64.tar.gz
 ```
 
 #### Important !!!, always check the SHA256 Checksum before using it
 
-Download `tob-http-agent-sha256sums.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.4.1/tob-http-agent-sha256sums.txt
+Download `tob-http-agent-sha256sums.txt` according to the binary version you downloaded https://github.com/telkomdev/tob/releases/download/1.4.2/tob-http-agent-sha256sums.txt
 
 ```shell
-$ wget https://github.com/telkomdev/tob/releases/download/1.4.1/tob-http-agent-sha256sums.txt
+$ wget https://github.com/telkomdev/tob/releases/download/1.4.2/tob-http-agent-sha256sums.txt
 ```
 
 #### Verify `tob-http-agent` SHA256 Checksum
@@ -176,14 +176,14 @@ $ wget https://github.com/telkomdev/tob/releases/download/1.4.1/tob-http-agent-s
 Linux
 
 ```shell
-$ sha256sum tob-http-agent-1.0.0.linux-amd64.tar.gz -c tob-http-agent-sha256sums.txt
-tob-http-agent-1.0.0.linux-amd64.tar.gz: OK
+$ sha256sum tob-http-agent-1.1.0.linux-amd64.tar.gz -c tob-http-agent-sha256sums.txt
+tob-http-agent-1.1.0.linux-amd64.tar.gz: OK
 ```
 
 #### Extract `tob-http-agent`
 
 ```shell
-$ tar -xvzf tob-http-agent-1.0.0.linux-amd64.tar.gz
+$ tar -xvzf tob-http-agent-1.1.0.linux-amd64.tar.gz
 ```
 
 #### Run `tob-http-agent` as a daemon with `systemd`

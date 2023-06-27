@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/telkomdev/tob"
+	"github.com/telkomdev/tob/data"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -87,7 +88,18 @@ func indexHandler() http.HandlerFunc {
 
 func checkStorageHandler() http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
-		jsonMap, wait, err := checkDiskStatus()
+		if req.Method != http.MethodPost {
+			jsonResponse(res, 400, []byte(`{"success": false, "message": "invalid http method"}`))
+			return
+		}
+
+		var fileSystem data.FileSystem
+		if err := json.NewDecoder(req.Body).Decode(&fileSystem); err != nil {
+			jsonResponse(res, 400, []byte(`{"success": false, "message": "invalid file system payload"}`))
+			return
+		}
+
+		jsonMap, wait, err := checkDiskStatus(fileSystem.Path)
 		if err != nil {
 			jsonResponse(res, 500, []byte(`{"success": false, "message": "error check storage"}`))
 			return
@@ -134,14 +146,22 @@ func loggerMiddleware(next http.Handler) http.HandlerFunc {
 	}
 }
 
-func checkDiskStatus() (map[string]interface{}, func() error, error) {
+func checkDiskStatus(directoryTarget string) (map[string]interface{}, func() error, error) {
+	// check if df binary exist
 	dfPath, err := exec.LookPath("df")
 	if err != nil {
 		tob.Logger.Println(err)
 		return nil, nil, err
 	}
 
-	cmd := exec.Command(dfPath, "/")
+	// check if directory exist
+	_, err = os.Stat(directoryTarget)
+	if err != nil {
+		tob.Logger.Println(err)
+		return nil, nil, err
+	}
+
+	cmd := exec.Command(dfPath, directoryTarget)
 	outPipe, err := cmd.StdoutPipe()
 	if err != nil {
 		tob.Logger.Println(err)

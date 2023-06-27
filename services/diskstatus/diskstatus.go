@@ -1,6 +1,7 @@
 package diskstatus
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/telkomdev/tob/config"
+	"github.com/telkomdev/tob/data"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
 )
@@ -86,7 +88,34 @@ func (d *DiskStatus) resolveIPv4() string {
 
 // Ping will try to ping the service
 func (d *DiskStatus) Ping() []byte {
-	resp, err := httpx.HTTPGet(fmt.Sprintf("%s/check-disk", d.url), nil, 5)
+	fileSystemPathStr, ok := d.configs["fileSystem"].(string)
+	if !ok {
+		if d.verbose {
+			d.logger.Println("fileSystemPathStr is not valid")
+		}
+		return []byte("NOT_OK")
+	}
+
+	if d.verbose {
+		d.logger.Println(fmt.Sprintf("tob-http-agent check %s file system", fileSystemPathStr))
+	}
+
+	fileSystemPayload := data.FileSystem{
+		Path: fileSystemPathStr,
+	}
+
+	payloadJSON, err := json.Marshal(fileSystemPayload)
+	if err != nil {
+		if d.verbose {
+			d.logger.Println(err)
+		}
+		return []byte("NOT_OK")
+	}
+
+	headers := make(map[string]string)
+	headers["Content-Type"] = "application/json"
+
+	resp, err := httpx.HTTPPost(fmt.Sprintf("%s/check-disk", d.url), bytes.NewBuffer(payloadJSON), headers, 5)
 	if err != nil {
 		if d.verbose {
 			d.logger.Println(err)

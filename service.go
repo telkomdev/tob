@@ -20,6 +20,9 @@ var (
 	// MongoDB service kind
 	MongoDB ServiceKind = "mongodb"
 
+	// Oracle service kind
+	Oracle ServiceKind = "oracle"
+
 	// Redis service kind
 	Redis ServiceKind = "redis"
 

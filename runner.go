@@ -15,6 +15,7 @@ import (
 	"github.com/telkomdev/tob/services/kafka"
 	"github.com/telkomdev/tob/services/mongodb"
 	"github.com/telkomdev/tob/services/mysqldb"
+	"github.com/telkomdev/tob/services/oracle"
 	"github.com/telkomdev/tob/services/postgres"
 	"github.com/telkomdev/tob/services/redisdb"
 	"github.com/telkomdev/tob/services/web"
@@ -59,6 +60,7 @@ func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
 	services[MongoDB] = mongodb.NewMongo(verbose, Logger)
 	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)
 	services[Postgresql] = postgres.NewPostgres(verbose, Logger)
+	services[Oracle] = oracle.NewOracle(verbose, Logger)
 	services[Redis] = redisdb.NewRedis(verbose, Logger)
 	services[Web] = web.NewWeb(verbose, Logger)
 	services[Elasticsearch] = elasticsearch.NewElasticsearch(verbose, Logger)
@@ -160,7 +162,7 @@ func (r *Runner) InitServices() error {
 	// set waiter capacity with amount of service to be executed
 	r.waiter = newWaiter(uint(totalServiceToBeExecuted))
 	if r.verbose {
-		Logger.Println(fmt.Sprintf("total service to be executed: %d", uint(totalServiceToBeExecuted)))
+		Logger.Printf("total service to be executed: %d", uint(totalServiceToBeExecuted))
 	}
 
 	return nil
@@ -171,7 +173,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 	for {
 		select {
 		case <-s.Stop():
-			Logger.Println(fmt.Sprintf("runner service %s received stop channel, cleanup resource now !!", n))
+			Logger.Printf("runner service %s received stop channel, cleanup resource now !!", n)
 
 			// stop ticker
 			t.Stop()
@@ -198,7 +200,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					if notificator.IsEnabled() {
 						err := notificator.Send(notificatorMessage)
 						if err != nil {
-							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
+							Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
 						}
 					}
 				}
@@ -217,13 +219,13 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					if notificator.IsEnabled() {
 						err := notificator.Send(notificatorMessage)
 						if err != nil {
-							Logger.Println(fmt.Sprintf("notificator %s error: %s", notificator.Provider(), err.Error()))
+							Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
 						}
 					}
 				}
 			}
 
-			Logger.Println(fmt.Sprintf("%s => %s", n, respStr))
+			Logger.Printf("%s => %s", n, respStr)
 		}
 	}
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
+	"github.com/telkomdev/tob/dashboard/server"
 )
 
 func main() {
@@ -55,6 +56,13 @@ func main() {
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer func() { cancel() }()
 
+	// dashboard server
+	dashboardServer, err := server.NewHTTPServer(configs, tob.Logger)
+	if err != nil {
+		fmt.Println("error: ", err)
+		os.Exit(1)
+	}
+
 	// runner
 	runner, err := tob.NewRunner(notificators, configs, args.Verbose)
 	if err != nil {
@@ -73,16 +81,19 @@ func main() {
 	// notify when user interrupt the process
 	signal.Notify(kill, syscall.SIGINT, syscall.SIGTERM)
 
-	go waitNotify(kill, runner)
+	go waitNotify(kill, runner, dashboardServer)
+
+	go dashboardServer.Run()
 
 	// run the Runner
 	runner.Run(ctx)
 
 }
 
-func waitNotify(kill chan os.Signal, runner *tob.Runner) {
+func waitNotify(kill chan os.Signal, runner *tob.Runner, dashboardServer *server.HTTPServer) {
 	select {
 	case <-kill:
+		dashboardServer.Exit()
 		runner.Stop() <- true
 		fmt.Println("kill tob")
 	}

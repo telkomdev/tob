@@ -5,10 +5,15 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/dashboard/shared"
+)
+
+var (
+	defaultDashboardTitle = "Tob Monitoring Dashboard"
 )
 
 // WebhookMessage type
@@ -18,14 +23,24 @@ type WebhookMessage struct {
 
 // DashboardHTTPHandler type
 type DashboardHTTPHandler struct {
-	tobConfig        config.Config
 	serviceData      map[string]map[string]interface{}
 	logger           *log.Logger
 	webhookTobTokens []string
+	dashboardTitle   string
+}
+
+// Data type
+type Data struct {
+	Data           map[string]map[string]interface{} `json:"data"`
+	DashboardTitle string                            `json:"dashboardTitle"`
 }
 
 // NewDashboardHTTPHandler DashboardHTTPHandler's constructor
 func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*DashboardHTTPHandler, error) {
+	if dashboardTitle, ok := tobConfig["dashboardTitle"].(string); ok {
+		defaultDashboardTitle = dashboardTitle
+	}
+
 	notificatorConfigInterface, ok := tobConfig["notificator"]
 	if !ok {
 		return nil, errors.New("notificator key from tob config is undefined")
@@ -80,7 +95,7 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 	}
 
 	return &DashboardHTTPHandler{
-		tobConfig:        tobConfig,
+		dashboardTitle:   defaultDashboardTitle,
 		serviceData:      serviceData,
 		logger:           logger,
 		webhookTobTokens: webhookTobTokens,
@@ -101,11 +116,16 @@ func (h *DashboardHTTPHandler) GetServices() http.HandlerFunc {
 			return
 		}
 
-		shared.BuildJSONResponse(resp, shared.Response[map[string]map[string]interface{}]{
+		data := Data{
+			Data:           h.serviceData,
+			DashboardTitle: h.dashboardTitle,
+		}
+
+		shared.BuildJSONResponse(resp, shared.Response[Data]{
 			Success: true,
 			Code:    200,
 			Message: "get all services succeed",
-			Data:    h.serviceData,
+			Data:    data,
 		}, 200)
 	}
 }
@@ -165,7 +185,7 @@ func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 			h.logger.Print(messages[0])
 
 			serviceName := strings.Trim(messages[0], " ")
-			status := strings.Trim(messages[2], " ")
+			status := strings.Trim(regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(messages[2], ""), " ")
 
 			service, ok := h.serviceData[serviceName]
 			if ok {

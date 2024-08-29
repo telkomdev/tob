@@ -2,3 +2,4 @@ config.json
 *.yml
 volumes/
 dbscript/
+.DS_Store

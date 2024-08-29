@@ -49,7 +49,7 @@ func InitNotificatorFactory(configs config.Config, verbose bool) ([]Notificator,
 	}
 
 	// webhook notificator
-	webhookNotificator, err := webhook.NewWebhook(configs)
+	webhookNotificator, err := webhook.NewWebhook(configs, verbose, Logger)
 	if err != nil {
 		return nil, err
 	}

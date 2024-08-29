@@ -90,6 +90,7 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 			return nil, errors.New("cannot convert tob service to map")
 		}
 
+		// by default services status is UP
 		services["status"] = "UP"
 		serviceData[name] = services
 	}
@@ -154,16 +155,24 @@ func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 			return
 		}
 
-		for _, token := range h.webhookTobTokens {
-			if req.Header["X-Tob-Token"][0] != token {
-				shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
-					Success: false,
-					Code:    401,
-					Message: "X-Tob-Token is not valid",
-					Data:    shared.EmptyJSON{},
-				}, 401)
-				return
+		xTobTokenInConfig := func() bool {
+			for _, token := range h.webhookTobTokens {
+				if req.Header["X-Tob-Token"][0] == token {
+					return true
+				}
 			}
+
+			return false
+		}
+
+		if !xTobTokenInConfig() {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    401,
+				Message: "X-Tob-Token is not valid",
+				Data:    shared.EmptyJSON{},
+			}, 401)
+			return
 		}
 
 		var message WebhookMessage

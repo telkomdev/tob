@@ -31,7 +31,7 @@ function App() {
           setServices(serviceArray);
           setDashboardTitle(result.data.dashboardTitle);
         } else {
-          throw new Error('Failed to retrieve services');
+          setError('Failed to retrieve services');
         }
       } catch (err) {
         setError(err.message);

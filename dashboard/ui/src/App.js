@@ -21,6 +21,12 @@ function App() {
             const service = result.data.data[key];
             // Calculate the latest check time
             const latestCheckTime = new Date(Date.now() - service.checkInterval * 1000);
+
+            // add service.kind to tags
+            if (service.tags) {
+              service.tags.push(service.kind);
+            }
+
             return {
               name: key,
               ...service,
@@ -155,7 +161,14 @@ function App() {
               {service.tags && (
                 <div style={getTagsStyle()}>
                   {service.tags.map((tag, tagIndex) => (
-                    <span key={tagIndex} style={getTagStyle()} onClick={() => handleTagClick(tag)}>
+                    <span 
+                      key={tagIndex} 
+                      style={{
+                        ...getTagStyle(),
+                        backgroundColor: selectedTag === tag ? '#007bff' : '#fff',
+                        color: selectedTag === tag ? '#fff' : '#333',
+                      }}
+                      onClick={() => handleTagClick(tag)}>
                       {tag}
                     </span>
                   ))}

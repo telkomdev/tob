@@ -61,9 +61,6 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 	for _, webhookConfigInterface := range webhookConfigList {
 		webhookConfig := webhookConfigInterface.(map[string]interface{})
 
-		logger.Print("webhook key")
-		logger.Print(webhookConfig)
-
 		webhookTobToken, ok := webhookConfig["tobToken"].(string)
 		if !ok {
 			return nil, errors.New("cannot convert webhookConfig tobToken to string")
@@ -92,6 +89,7 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 
 		// by default services status is UP
 		services["status"] = "UP"
+		// services["url"] = ""
 		serviceData[name] = services
 	}
 

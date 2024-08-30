@@ -5,9 +5,10 @@ function App() {
   const [dashboardTitle, setDashboardTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
 
   useEffect(() => {
-    // Define the fetch function
     const fetchServiceData = async () => {
       try {
         const response = await fetch('/api/services');
@@ -16,10 +17,16 @@ function App() {
         }
         const result = await response.json();
         if (result.success) {
-          const serviceArray = Object.keys(result.data.data).map(key => ({
-            name: key,
-            ...result.data.data[key],
-          }));
+          const serviceArray = Object.keys(result.data.data).map(key => {
+            const service = result.data.data[key];
+            // Calculate the latest check time
+            const latestCheckTime = new Date(Date.now() - service.checkInterval * 1000);
+            return {
+              name: key,
+              ...service,
+              latestCheckTime: latestCheckTime.toLocaleString(), // Convert to readable string
+            };
+          });
 
           // Sort the services: DOWN first, then UP
           serviceArray.sort((a, b) => {
@@ -31,7 +38,7 @@ function App() {
           setServices(serviceArray);
           setDashboardTitle(result.data.dashboardTitle);
         } else {
-          setError('Failed to retrieve services');
+          throw new Error('Failed to retrieve services');
         }
       } catch (err) {
         setError(err.message);
@@ -40,13 +47,8 @@ function App() {
       }
     };
 
-    // Initial fetch on component mount
     fetchServiceData();
-
-    // Set an interval to fetch the data every X milliseconds
-    const intervalId = setInterval(fetchServiceData, 5000); // Adjust the interval time as needed
-
-    // Cleanup the interval on component unmount
+    const intervalId = setInterval(fetchServiceData, 5000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -79,17 +81,53 @@ function App() {
       fontSize: '12px',
       border: '1px solid #ddd',
       boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      cursor: 'pointer', // To indicate it's clickable
     };
   };
+
+  // Handle search term change
+  const handleSearchTermChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Handle tag click to filter by tag
+  const handleTagClick = (tag) => {
+    setSelectedTag(tag === selectedTag ? '' : tag); // Toggle tag filter
+  };
+
+  // Filter services based on search term and selected tag
+  const filteredServices = services.filter(service => {
+    const matchesSearchTerm = service.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTag = selectedTag ? service.tags.includes(selectedTag) : true;
+    return matchesSearchTerm && matchesTag;
+  });
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4' }}>
       <h1 style={{ textAlign: 'center' }}>{dashboardTitle}</h1>
+      <input
+        type="text"
+        placeholder="Search services..."
+        value={searchTerm}
+        onChange={handleSearchTermChange}
+        style={{
+          width: '80%',
+          maxWidth: '600px',
+          padding: '10px',
+          marginBottom: '20px',
+          borderRadius: '8px',
+          border: '1px solid #ddd',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      />
       {loading && <p>Loading services...</p>}
       {error && <p>Error: {error}</p>}
       {!loading && !error && (
         <ul style={{ maxWidth: '600px', margin: '0 auto', padding: '0', listStyle: 'none' }}>
-          {services.map((service, index) => (
+          {filteredServices.map((service, index) => (
             <li key={index} style={{
               backgroundColor: '#fff',
               margin: '10px 0',
@@ -111,10 +149,13 @@ function App() {
                   {service.status === 'UP' ? 'OK' : 'Not OK'}
                 </span>
               </div>
+              <span style={{ fontSize: '12px', color: '#555' }}>
+                Last checked: {service.latestCheckTime}
+              </span>
               {service.tags && (
                 <div style={getTagsStyle()}>
                   {service.tags.map((tag, tagIndex) => (
-                    <span key={tagIndex} style={getTagStyle()}>
+                    <span key={tagIndex} style={getTagStyle()} onClick={() => handleTagClick(tag)}>
                       {tag}
                     </span>
                   ))}

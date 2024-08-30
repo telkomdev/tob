@@ -75,7 +75,7 @@ func (d *Oracle) Connect() error {
 	parsedURL, err := url.Parse(d.url)
 	if err != nil {
 		if d.verbose {
-			d.logger.Printf("error parsing oracle url: %s", err.Error())
+			d.logger.Printf("error parsing oracle url: %s\n", err.Error())
 		}
 		return err
 	}

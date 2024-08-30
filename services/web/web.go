@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -14,7 +13,6 @@ import (
 type Web struct {
 	url           string
 	recovered     bool
-	serviceName   string
 	lastDownTime  string
 	enabled       bool
 	verbose       bool
@@ -46,20 +44,23 @@ func (d *Web) Name() string {
 func (d *Web) Ping() []byte {
 	resp, err := httpx.HTTPGet(d.url, nil, 5)
 	if err != nil {
+		if d.verbose {
+			d.logger.Printf("error: Ping() %s\n", err.Error())
+		}
 		return []byte("NOT_OK")
 	}
 
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
 		if d.verbose {
-			d.logger.Println(fmt.Sprintf("web Ping status: %d", resp.StatusCode))
+			d.logger.Printf("web Ping status: %d\n", resp.StatusCode)
 		}
 
 		return []byte("NOT_OK")
 	}
 
 	if d.verbose {
-		d.logger.Println(fmt.Sprintf("web Ping status: %d", resp.StatusCode))
+		d.logger.Printf("web Ping status: %d\n", resp.StatusCode)
 	}
 
 	return []byte("OK")

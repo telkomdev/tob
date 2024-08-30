@@ -140,7 +140,7 @@ func jsonResponse(res http.ResponseWriter, httpCode int, payload []byte) {
 func loggerMiddleware(next http.Handler) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		start := time.Now()
-		tob.Logger.Printf("path: %s | method: %s | remote_address: %s | user_agent: %s | duration: %v",
+		tob.Logger.Printf("path: %s | method: %s | remote_address: %s | user_agent: %s | duration: %v\n",
 			req.URL.EscapedPath(), req.Method, req.RemoteAddr, req.UserAgent(), time.Since(start))
 		next.ServeHTTP(res, req)
 	}

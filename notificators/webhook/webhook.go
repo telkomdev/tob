@@ -121,7 +121,7 @@ func (d *Webhook) Send(msg string) error {
 				statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 				if !statusOK {
 					if d.verbose {
-						d.logger.Printf("notificator %s error: %s", d.Provider(), httpx.ErrorStatusNot200)
+						d.logger.Printf("notificator %s error: %s\n", d.Provider(), httpx.ErrorStatusNot200)
 					}
 				}
 			}(conf.webhookURL, bytes.NewBuffer(messageJSON), conf.headers, 5, d)

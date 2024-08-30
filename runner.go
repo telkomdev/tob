@@ -96,7 +96,7 @@ func (r *Runner) InitServices() error {
 			return errors.New("invalid config file")
 		}
 
-		Logger.Println(name, " ", conf["url"])
+		Logger.Println(name)
 
 		urlStr, ok := conf["url"].(string)
 		if !ok {
@@ -162,7 +162,7 @@ func (r *Runner) InitServices() error {
 	// set waiter capacity with amount of service to be executed
 	r.waiter = newWaiter(uint(totalServiceToBeExecuted))
 	if r.verbose {
-		Logger.Printf("total service to be executed: %d", uint(totalServiceToBeExecuted))
+		Logger.Printf("total service to be executed: %d\n", uint(totalServiceToBeExecuted))
 	}
 
 	return nil
@@ -173,7 +173,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 	for {
 		select {
 		case <-s.Stop():
-			Logger.Printf("runner service %s received stop channel, cleanup resource now !!", n)
+			Logger.Printf("runner service %s received stop channel, cleanup resource now !!\n", n)
 
 			// stop ticker
 			t.Stop()
@@ -219,13 +219,13 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					if notificator.IsEnabled() {
 						err := notificator.Send(notificatorMessage)
 						if err != nil {
-							Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+							Logger.Printf("notificator %s error: %s\n", notificator.Provider(), err.Error())
 						}
 					}
 				}
 			}
 
-			Logger.Printf("%s => %s", n, respStr)
+			Logger.Printf("%s => %s\n", n, respStr)
 		}
 	}
 }

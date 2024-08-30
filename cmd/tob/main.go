@@ -56,13 +56,6 @@ func main() {
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer func() { cancel() }()
 
-	// dashboard server
-	dashboardServer, err := server.NewHTTPServer(configs, tob.Logger)
-	if err != nil {
-		fmt.Println("error: ", err)
-		os.Exit(1)
-	}
-
 	// runner
 	runner, err := tob.NewRunner(notificators, configs, args.Verbose)
 	if err != nil {
@@ -74,6 +67,13 @@ func main() {
 	err = runner.InitServices()
 	if err != nil {
 		fmt.Println("error InitServices : ", err)
+		os.Exit(1)
+	}
+
+	// dashboard server
+	dashboardServer, err := server.NewHTTPServer(configs, tob.Logger)
+	if err != nil {
+		fmt.Println("error: ", err)
 		os.Exit(1)
 	}
 

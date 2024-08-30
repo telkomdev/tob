@@ -44,7 +44,7 @@ function App() {
           setServices(serviceArray);
           setDashboardTitle(result.data.dashboardTitle);
         } else {
-          throw new Error('Failed to retrieve services');
+          setError('Failed to retrieve services');
         }
       } catch (err) {
         setError(err.message);
@@ -58,16 +58,29 @@ function App() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const getStatusStyle = (status) => {
-    return {
-      padding: '5px 10px',
-      borderRadius: '4px',
-      color: '#fff',
-      fontWeight: 'bold',
-      backgroundColor: status === 'UP' ? '#28a745' : '#dc3545',
-      whiteSpace: 'nowrap',
-    };
-  };
+  const keyframes = `
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  `;
+  
+  const getStatusStyle = (status) => ({
+    padding: '5px 10px',
+    borderRadius: '4px',
+    color: '#fff',
+    fontWeight: 'bold',
+    backgroundColor: status === 'UP' ? '#28a745' : '#dc3545',
+    whiteSpace: 'nowrap',
+    animation: 'pulse 1s infinite',
+  });
 
   const getTagsStyle = () => {
     return {
@@ -144,6 +157,8 @@ function App() {
               alignItems: 'flex-start',
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
             }}>
+              
+              <style>{keyframes}</style>
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -155,8 +170,9 @@ function App() {
                   {service.status === 'UP' ? 'OK' : 'Not OK'}
                 </span>
               </div>
-              <span style={{ fontSize: '12px', color: '#555' }}>
-                Last checked: {service.latestCheckTime}
+              
+              <span style={{ fontSize: '13px', color: '#555' }}>
+                <span style={{ color: '#593f03' }}>Last checked:{service.latestCheckTime}</span> 
               </span>
               {service.tags && (
                 <div style={getTagsStyle()}>

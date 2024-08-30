@@ -89,7 +89,7 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 
 		// by default services status is UP
 		services["status"] = "UP"
-		// services["url"] = ""
+		services["url"] = ""
 		serviceData[name] = services
 	}
 

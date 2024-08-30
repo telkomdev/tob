@@ -183,6 +183,9 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 
 			return
 		case <-t.C:
+			// set message to empty
+			s.SetMessage("")
+
 			resp := s.Ping()
 			respStr := string(resp)
 			if respStr == NotOk && s.IsRecover() {
@@ -193,7 +196,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 
 				notificatorMessage := fmt.Sprintf("%s is DOWN", n)
 				if s.GetMessage() != "" {
-					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
+					notificatorMessage = fmt.Sprintf("%s is DOWN | %s", n, s.GetMessage())
 				}
 
 				for _, notificator := range notificators {

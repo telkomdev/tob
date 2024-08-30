@@ -87,6 +87,15 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 			return nil, errors.New("cannot convert tob service to map")
 		}
 
+		serviceEnabled, ok := services["enable"].(bool)
+		if !ok {
+			return nil, errors.New("cannot convert service: enable to bool")
+		}
+
+		if !serviceEnabled {
+			continue
+		}
+
 		// by default services status is UP
 		services["status"] = "UP"
 		services["url"] = ""
@@ -189,7 +198,7 @@ func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 		messages := strings.Split(message.Message, " ")
 		if len(messages) > 0 {
 			h.logger.Print("--------------------")
-			h.logger.Print(messages[0])
+			h.logger.Print(messages)
 
 			serviceName := strings.Trim(messages[0], " ")
 			status := strings.Trim(regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(messages[2], ""), " ")
@@ -197,6 +206,15 @@ func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 			service, ok := h.serviceData[serviceName]
 			if ok {
 				service["status"] = status
+			}
+
+			if len(messages) > 3 {
+				messageDetails := strings.Join(messages[4:], " ")
+				service["messageDetails"] = messageDetails
+			}
+
+			if status == "UP" {
+				service["messageDetails"] = ""
 			}
 		}
 

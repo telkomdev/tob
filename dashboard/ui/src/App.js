@@ -145,7 +145,7 @@ function App() {
       {loading && <p>Loading services...</p>}
       {error && <p>Error: {error}</p>}
       {!loading && !error && (
-        <ul style={{ maxWidth: '600px', margin: '0 auto', padding: '0', listStyle: 'none' }}>
+        <ul style={{ maxWidth: '800px', margin: '0 auto', padding: '0', listStyle: 'none' }}>
           {filteredServices.map((service, index) => (
             <li key={index} style={{
               backgroundColor: '#fff',
@@ -165,14 +165,20 @@ function App() {
                 width: '100%',
                 marginBottom: '10px',
               }}>
-                <span style={{ fontSize: '18px' }}>{service.name}</span>
+                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{service.name}</span>
                 <span style={getStatusStyle(service.status)}>
                   {service.status === 'UP' ? 'OK' : 'Not OK'}
                 </span>
               </div>
+
+              {service.status === 'DOWN' && (
+                <span style={{ fontSize: '14px', color: '#dc3545', marginBottom: '10px' }}>
+                  {service.messageDetails}
+                </span>
+              )}
               
               <span style={{ fontSize: '13px', color: '#555' }}>
-                <span style={{ color: '#593f03' }}>Last checked:{service.latestCheckTime}</span> 
+                <span style={{ color: '#593f03' }}>Last checked: {service.latestCheckTime}</span> 
               </span>
               {service.tags && (
                 <div style={getTagsStyle()}>

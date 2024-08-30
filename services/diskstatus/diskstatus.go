@@ -19,7 +19,6 @@ import (
 type DiskStatus struct {
 	url           string
 	recovered     bool
-	serviceName   string
 	lastDownTime  string
 	enabled       bool
 	verbose       bool
@@ -97,7 +96,7 @@ func (d *DiskStatus) Ping() []byte {
 	}
 
 	if d.verbose {
-		d.logger.Println(fmt.Sprintf("tob-http-agent check %s file system", fileSystemPathStr))
+		d.logger.Printf("tob-http-agent check %s file system\n", fileSystemPathStr)
 	}
 
 	fileSystemPayload := data.FileSystem{
@@ -126,14 +125,14 @@ func (d *DiskStatus) Ping() []byte {
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
 		if d.verbose {
-			d.logger.Println(fmt.Sprintf("DiskStatus Ping status: %d", resp.StatusCode))
+			d.logger.Printf("DiskStatus Ping status: %d\n", resp.StatusCode)
 		}
 
 		return []byte("NOT_OK")
 	}
 
 	if d.verbose {
-		d.logger.Println(fmt.Sprintf("DiskStatus Ping status: %d", resp.StatusCode))
+		d.logger.Printf("DiskStatus Ping status: %d\n", resp.StatusCode)
 	}
 
 	defer func() { resp.Body.Close() }()

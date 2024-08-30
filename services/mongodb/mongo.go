@@ -22,6 +22,7 @@ type Mongo struct {
 	client        *mongo.Client
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewMongo Mongo's constructor
@@ -50,6 +51,7 @@ func (d *Mongo) Ping() []byte {
 	}
 
 	if err := d.client.Ping(context.Background(), nil); err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Println("MongoDB error")
 			d.logger.Println(err)
@@ -161,12 +163,12 @@ func (d *Mongo) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Mongo) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Mongo) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

@@ -21,6 +21,7 @@ type Postgres struct {
 	db            *sql.DB
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewPostgres Postgres's constructor
@@ -49,6 +50,7 @@ func (d *Postgres) Ping() []byte {
 	}
 
 	if err := d.db.Ping(); err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Println("Postgre error")
 			d.logger.Println(err)
@@ -149,12 +151,12 @@ func (d *Postgres) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Postgres) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Postgres) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

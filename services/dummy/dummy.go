@@ -19,6 +19,7 @@ type Dummy struct {
 	logger        *log.Logger
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewDummy Dummy's constructor
@@ -44,6 +45,7 @@ func (d *Dummy) Name() string {
 func (d *Dummy) Ping() []byte {
 	n := rand.Intn(100)
 	if n < 50 {
+		d.SetMessage("dummy has an error")
 		return []byte("NOT_OK")
 	}
 
@@ -117,12 +119,12 @@ func (d *Dummy) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Dummy) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Dummy) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

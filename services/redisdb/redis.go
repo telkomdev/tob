@@ -22,6 +22,7 @@ type Redis struct {
 	client        *redis.Client
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewRedis Redis's constructor
@@ -51,6 +52,7 @@ func (d *Redis) Ping() []byte {
 
 	reply := d.client.Ping(context.Background())
 	if reply.Err() != nil {
+		d.SetMessage(reply.Err().Error())
 		if d.verbose {
 			d.logger.Println("Redis error")
 			d.logger.Println(reply.Err())
@@ -171,12 +173,12 @@ func (d *Redis) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Redis) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Redis) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

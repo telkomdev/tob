@@ -1,7 +1,6 @@
 package kafka
 
 import (
-	"fmt"
 	"log"
 	"net/url"
 	"strings"
@@ -30,6 +29,7 @@ type Kafka struct {
 	client        *kf.Conn
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewKafka Kafka's constructor
@@ -59,6 +59,7 @@ func (d *Kafka) Ping() []byte {
 
 	reply, err := d.client.Brokers()
 	if err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Println("Kafka error read available brokers")
 			d.logger.Println(err)
@@ -66,18 +67,18 @@ func (d *Kafka) Ping() []byte {
 
 		// re dial
 		if strings.Contains(err.Error(), ErrorClosedNetwork) {
-			d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
+			d.logger.Printf("Kafka: %s | do re dial\n", err.Error())
 			// re dial ignore error
 			err = d.dial()
 			if err != nil {
-				d.logger.Println(fmt.Sprintf("Kafka: %s | do re dial\n", err.Error()))
+				d.logger.Printf("Kafka: %s | do re dial\n", err.Error())
 			}
 		}
 		return []byte("NOT_OK")
 	}
 
 	if d.verbose {
-		d.logger.Print(fmt.Sprintf("Expected Kafka Brokers size: %d", d.brokerSize))
+		d.logger.Printf("Expected Kafka Brokers size: %d\n", d.brokerSize)
 		d.logger.Print("Kafka Brokers: ")
 		for _, broker := range reply {
 			d.logger.Println(broker.Host)
@@ -230,12 +231,12 @@ func (d *Kafka) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Kafka) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Kafka) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

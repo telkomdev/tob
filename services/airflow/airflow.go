@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -18,7 +18,6 @@ import (
 type Airflow struct {
 	url                string
 	recovered          bool
-	serviceName        string
 	lastDownTime       string
 	schedulerStatus    string
 	metadatabaseStatus string
@@ -27,6 +26,7 @@ type Airflow struct {
 	logger             *log.Logger
 	checkInterval      int
 	stopChan           chan bool
+	message            string
 }
 
 // Airflow's constructor
@@ -50,10 +50,10 @@ func (a *Airflow) Name() string {
 
 // checkClusterStatus will check status of Airflow's metadatabase & scheduler
 func (a *Airflow) checkClusterStatus(resp *http.Response) error {
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		if a.verbose {
-			a.logger.Println(fmt.Sprintf("cannot read response body: %v", err))
+			a.logger.Printf("cannot read response body: %v\n", err)
 		}
 
 		return err
@@ -64,7 +64,7 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		if a.verbose {
-			a.logger.Println(fmt.Sprintf("cannot read parse JSON body: %v", err))
+			a.logger.Printf("cannot read parse JSON body: %v\n", err)
 		}
 
 		return err
@@ -73,7 +73,7 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 	schedulerStatus, ok := data["scheduler"].(map[string]interface{})["status"].(string)
 	if !ok {
 		if a.verbose {
-			a.logger.Println(fmt.Sprintf("cannot read scheduler status: %v", err))
+			a.logger.Printf("cannot read scheduler status: %v\n", err)
 		}
 
 		return err
@@ -83,7 +83,7 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 	metadatabaseStatus, ok := data["metadatabase"].(map[string]interface{})["status"].(string)
 	if !ok {
 		if a.verbose {
-			a.logger.Println(fmt.Sprintf("cannot read metadatabase status: %v", err))
+			a.logger.Printf("cannot read metadatabase status: %v\n", err)
 		}
 
 		return err
@@ -106,24 +106,27 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 func (a *Airflow) Ping() []byte {
 	resp, err := httpx.HTTPGet(a.url, nil, 5)
 	if err != nil {
+		a.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
+		a.SetMessage(fmt.Sprintf("airflow Ping status: %d", resp.StatusCode))
 		if a.verbose {
-			a.logger.Println(fmt.Sprintf("airflow Ping status: %d", resp.StatusCode))
+			a.logger.Printf("airflow Ping status: %d\n", resp.StatusCode)
 		}
 
 		return []byte("NOT_OK")
 	}
 
 	if err := a.checkClusterStatus(resp); err != nil {
+		a.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
 	if a.verbose {
-		a.logger.Println(fmt.Sprintf("airflow: scheduler (%s), metadatabase (%s)", a.schedulerStatus, a.metadatabaseStatus))
+		a.logger.Printf("airflow: scheduler (%s), metadatabase (%s)\n", a.schedulerStatus, a.metadatabaseStatus)
 	}
 
 	return []byte("OK")
@@ -196,12 +199,12 @@ func (a *Airflow) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (a *Airflow) SetMessage(message string) {
-
+	a.message = message
 }
 
 // GetMessage will return additional message
 func (a *Airflow) GetMessage() string {
-	return ""
+	return a.message
 }
 
 // SetConfig will set config

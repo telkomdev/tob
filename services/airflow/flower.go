@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -18,7 +18,6 @@ import (
 type AirflowFlower struct {
 	url           string
 	recovered     bool
-	serviceName   string
 	lastDownTime  string
 	workers       []map[string]interface{}
 	workerErr     bool
@@ -27,6 +26,7 @@ type AirflowFlower struct {
 	logger        *log.Logger
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // Airflow flower's constructor
@@ -50,21 +50,22 @@ func (af *AirflowFlower) Name() string {
 
 // checkWorkerStatus will check available worker status in Airflow cluster
 func (af *AirflowFlower) checkWorkerStatus(resp *http.Response) error {
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		if af.verbose {
-			af.logger.Println(fmt.Sprintf("cannot read response body: %v", err))
+			af.logger.Printf("cannot read response body: %v\n", err)
 		}
 
 		return err
 	}
+
 	defer func() { resp.Body.Close() }()
 
 	var data map[string][]map[string]interface{}
 	err = json.Unmarshal([]byte(body), &data)
 	if err != nil {
 		if af.verbose {
-			af.logger.Println(fmt.Sprintf("cannot read parse JSON body: %v", err))
+			af.logger.Printf("cannot read parse JSON body: %v\n", err)
 		}
 
 		return err
@@ -76,7 +77,7 @@ func (af *AirflowFlower) checkWorkerStatus(resp *http.Response) error {
 		wStatus := worker["status"].(bool)
 		wName := worker["hostname"]
 		if !wStatus && af.verbose {
-			af.logger.Println(fmt.Sprintf("airflow worker %s is offline", wName))
+			af.logger.Printf("airflow worker %s is offline\n", wName)
 		} else {
 			// if there is any worker alive, means that airflow worker is healthy
 			// but need to check manually for offline worker
@@ -102,19 +103,22 @@ func (af *AirflowFlower) checkWorkerStatus(resp *http.Response) error {
 func (af *AirflowFlower) Ping() []byte {
 	resp, err := httpx.HTTPGet(af.url+"?json=1", nil, 5)
 	if err != nil {
+		af.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
+		af.SetMessage(fmt.Sprintf("airflow-flower Ping status: %d", resp.StatusCode))
 		if af.verbose {
-			af.logger.Println(fmt.Sprintf("airflow-flower Ping status: %d", resp.StatusCode))
+			af.logger.Printf("airflow-flower Ping status: %d\n", resp.StatusCode)
 		}
 
 		return []byte("NOT_OK")
 	}
 
 	if err := af.checkWorkerStatus(resp); err != nil {
+		af.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
@@ -188,12 +192,12 @@ func (af *AirflowFlower) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (af *AirflowFlower) SetMessage(message string) {
-
+	af.message = message
 }
 
 // GetMessage will return additional message
 func (af *AirflowFlower) GetMessage() string {
-	return ""
+	return af.message
 }
 
 // SetConfig will set config

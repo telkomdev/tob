@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -19,6 +20,7 @@ type Web struct {
 	logger        *log.Logger
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewWeb Web's constructor
@@ -44,6 +46,7 @@ func (d *Web) Name() string {
 func (d *Web) Ping() []byte {
 	resp, err := httpx.HTTPGet(d.url, nil, 5)
 	if err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Printf("error: Ping() %s\n", err.Error())
 		}
@@ -52,6 +55,7 @@ func (d *Web) Ping() []byte {
 
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
+		d.SetMessage(fmt.Sprintf("error: web Ping status: %d\n", resp.StatusCode))
 		if d.verbose {
 			d.logger.Printf("web Ping status: %d\n", resp.StatusCode)
 		}
@@ -133,12 +137,12 @@ func (d *Web) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Web) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Web) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

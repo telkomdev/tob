@@ -3,7 +3,7 @@ package elasticsearch
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -17,13 +17,13 @@ import (
 type Elasticsearch struct {
 	url           string
 	recovered     bool
-	serviceName   string
 	lastDownTime  string
 	enabled       bool
 	verbose       bool
 	logger        *log.Logger
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // Elasticsearch's constructor
@@ -48,10 +48,10 @@ func (e *Elasticsearch) Name() string {
 // checkClusterStatus checks the status of an Elasticsearch cluster by checking cluster index status.
 func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) {
 	cStatus := ""
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		if e.verbose {
-			e.logger.Println(fmt.Sprintf("cannot read response body: %v", err))
+			e.logger.Printf("cannot read response body: %v", err)
 		}
 
 		return cStatus, err
@@ -62,7 +62,7 @@ func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		if e.verbose {
-			e.logger.Println(fmt.Sprintf("cannot parse JSON body: %v", err))
+			e.logger.Printf("cannot parse JSON body: %v", err)
 		}
 
 		return cStatus, err
@@ -71,7 +71,7 @@ func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) 
 	cStatus, ok := data["status"].(string)
 	if !ok {
 		if e.verbose {
-			e.logger.Println(fmt.Sprintf("cannot read cluster status: %v", err))
+			e.logger.Printf("cannot read cluster status: %v", err)
 		}
 
 		return cStatus, err
@@ -92,13 +92,15 @@ func (e *Elasticsearch) checkClusterStatus(resp *http.Response) (string, error) 
 func (e *Elasticsearch) Ping() []byte {
 	resp, err := httpx.HTTPGet(e.url, nil, 5)
 	if err != nil {
+		e.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
 	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
 	if !statusOK {
+		e.SetMessage(fmt.Sprintf("error: elasticsearch Ping status: %d", resp.StatusCode))
 		if e.verbose {
-			e.logger.Println(fmt.Sprintf("elasticsearch Ping status: %d", resp.StatusCode))
+			e.logger.Printf("elasticsearch Ping status: %d", resp.StatusCode)
 		}
 
 		return []byte("NOT_OK")
@@ -106,11 +108,12 @@ func (e *Elasticsearch) Ping() []byte {
 
 	cStatus, err := e.checkClusterStatus(resp)
 	if err != nil {
+		e.SetMessage(err.Error())
 		return []byte("NOT_OK")
 	}
 
 	if e.verbose {
-		e.logger.Println(fmt.Sprintf("elasticsearch cluster status: %s", cStatus))
+		e.logger.Printf("elasticsearch cluster status: %s", cStatus)
 	}
 
 	return []byte("OK")
@@ -183,12 +186,12 @@ func (e *Elasticsearch) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (e *Elasticsearch) SetMessage(message string) {
-
+	e.message = message
 }
 
 // GetMessage will return additional message
 func (e *Elasticsearch) GetMessage() string {
-	return ""
+	return e.message
 }
 
 // SetConfig will set config

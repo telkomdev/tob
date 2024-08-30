@@ -21,6 +21,7 @@ type MySQL struct {
 	db            *sql.DB
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewMySQL MySQL's constructor
@@ -49,6 +50,7 @@ func (d *MySQL) Ping() []byte {
 	}
 
 	if err := d.db.Ping(); err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Println("MySQL error")
 			d.logger.Println(err)
@@ -149,12 +151,12 @@ func (d *MySQL) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *MySQL) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *MySQL) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

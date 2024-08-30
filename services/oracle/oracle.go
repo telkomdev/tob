@@ -22,6 +22,7 @@ type Oracle struct {
 	db            *ora.Connection
 	checkInterval int
 	stopChan      chan bool
+	message       string
 }
 
 // NewOracle Oracle's constructor
@@ -50,6 +51,7 @@ func (d *Oracle) Ping() []byte {
 	}
 
 	if err := d.db.Ping(context.Background()); err != nil {
+		d.SetMessage(err.Error())
 		if d.verbose {
 			d.logger.Println("Oracle ping error")
 			d.logger.Println(err)
@@ -186,12 +188,12 @@ func (d *Oracle) IsEnabled() bool {
 
 // SetMessage will set additional message
 func (d *Oracle) SetMessage(message string) {
-
+	d.message = message
 }
 
 // GetMessage will return additional message
 func (d *Oracle) GetMessage() string {
-	return ""
+	return d.message
 }
 
 // SetConfig will set config

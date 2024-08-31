@@ -176,6 +176,9 @@
 
     "dashboardHttpPort": 9115,
     "dashboardTitle": "My Product Monitoring Dashboard",
+    "dashboardJwtKey": "czNWm7vGU1usgoVBcuuDCDJWi4wAngTn",
+    "dashboardUsername": "tob",
+    "dashboardPassword": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
 
     "version": "1.0.0"
 }

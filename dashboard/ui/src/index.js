@@ -4,20 +4,8 @@ import reportWebVitals from './reportWebVitals';
 import { Dashboard, ErrorPage, Login } from './pages'
 import {
   createBrowserRouter,
-  RouterProvider,
-  Route,
-  Routes,
+  RouterProvider
 } from "react-router-dom";
-
-// function Root() {
-//   return (
-//     <Routes>
-//       <Route path="/" element={<Login />} />
-//       <Route path="/dashboard/*" element={<Dashboard />} />
-//       <Route path="/about/*" element={<div>Hello</div>} />
-//     </Routes>
-//   );
-// }
 
 const router = createBrowserRouter([
   {

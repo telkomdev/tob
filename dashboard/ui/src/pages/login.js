@@ -140,9 +140,11 @@ export default function Login(props) {
         </form>
       </main>
       <footer style={{
-        textAlign: 'right',
-        padding: '10px 20px',
-        backgroundColor: '#f4f4f4',
+        position: 'fixed',
+        bottom: '10px',
+        right: '20px',
+        fontSize: '15px',
+        color: '#666',
       }}>
         Status Page by <a href="https://github.com/telkomdev/tob" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'none' }}>Tob</a>
       </footer>

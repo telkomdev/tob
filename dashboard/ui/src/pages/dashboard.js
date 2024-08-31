@@ -139,43 +139,63 @@ function Dashboard() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ textAlign: 'center', flex: 1 }}>{dashboardTitle}</h1>
-        <button
-          onClick={logout}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          Logout
-        </button>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        flexWrap: 'wrap',
+        marginBottom: '20px'
+      }}>
+        <div style={{ flex: '1 1 auto', marginBottom: '10px' }}>
+          <img
+            src="tob.png"
+            alt="Logo"
+            style={{
+              width: '100px',
+              height: 'auto',
+            }}
+          />
+        </div>
+        <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
+          <h1>{dashboardTitle}</h1>
+        </div>
+        <div style={{ flex: '1 1 auto', textAlign: 'right' }}>
+          <button
+            onClick={logout}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#007bff',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '5px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search services..."
-        value={searchTerm}
-        onChange={handleSearchTermChange}
-        style={{
-          width: '80%',
-          maxWidth: '600px',
-          padding: '10px',
-          marginBottom: '20px',
-          borderRadius: '8px',
-          border: '1px solid #ddd',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          display: 'block',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Search services..."
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+          style={{
+            width: '80%',
+            maxWidth: '600px',
+            padding: '10px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            margin: '0 auto',
+          }}
+        />
+      </div>
+
       {loading && <p>Loading services...</p>}
       {error && <p>Error: {error}</p>}
       {!loading && !error && (
@@ -189,7 +209,7 @@ function Dashboard() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-start',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
             }}>
               
               <style>{keyframes}</style>
@@ -238,7 +258,7 @@ function Dashboard() {
       <footer style={{
         position: 'fixed',
         bottom: '10px',
-        right: '10px',
+        right: '20px',
         fontSize: '15px',
         color: '#666',
       }}>

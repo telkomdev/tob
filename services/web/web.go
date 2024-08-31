@@ -53,7 +53,7 @@ func (d *Web) Ping() []byte {
 		return []byte("NOT_OK")
 	}
 
-	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
+	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 500
 	if !statusOK {
 		d.SetMessage(fmt.Sprintf("error: web Ping status: %d\n", resp.StatusCode))
 		if d.verbose {

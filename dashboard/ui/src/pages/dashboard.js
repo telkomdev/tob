@@ -103,8 +103,12 @@ function Dashboard() {
     backgroundColor: status === 'UP' ? '#28a745' : '#dc3545',
     whiteSpace: 'nowrap',
     animation: 'pulse 1s infinite',
+    flexShrink: 0,
   });
-
+  
+  
+  
+  
   const getTagsStyle = () => ({
     display: 'flex',
     flexWrap: 'wrap',
@@ -200,59 +204,76 @@ function Dashboard() {
       {error && <p>Error: {error}</p>}
       {!loading && !error && (
         <ul style={{ maxWidth: '800px', margin: '0 auto', padding: '0', listStyle: 'none' }}>
-          {filteredServices.map((service, index) => (
-            <li key={index} style={{
-              backgroundColor: '#fff',
-              margin: '10px 0',
-              padding: '15px',
-              borderRadius: '8px',
+        {filteredServices.map((service, index) => (
+          <li key={index} style={{
+            backgroundColor: '#fff',
+            margin: '10px 0',
+            padding: '15px',
+            borderRadius: '8px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+          }}>
+            
+            <style>{keyframes}</style>
+            <div style={{
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              justifyContent: 'space-between',
+              width: '100%',
+              marginBottom: '10px',
+              flexWrap: 'wrap',
             }}>
-              
-              <style>{keyframes}</style>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                marginBottom: '10px',
+              <span style={{ 
+                fontSize: '18px', 
+                fontWeight: 'bold', 
+                flexGrow: 1, 
+                marginRight: '10px', 
+                wordWrap: 'break-word', // Allow breaking long words
+                overflowWrap: 'break-word', // IE and Edge support
+                maxWidth: 'calc(100% - 120px)', // Adjust based on status box size
               }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{service.name}</span>
-                <span style={getStatusStyle(service.status)}>
-                  {service.status === 'UP' ? 'OK' : 'Not OK'}
-                </span>
-              </div>
-
-              {service.status === 'DOWN' && (
-                <span style={{ fontSize: '14px', color: '#dc3545', marginBottom: '10px' }}>
-                  {service.messageDetails}
-                </span>
-              )}
-              
-              <span style={{ fontSize: '13px', color: '#555' }}>
-                <span style={{ color: '#593f03' }}>Last checked: {service.latestCheckTime}</span> 
+                {service.name}
               </span>
-              {service.tags && (
-                <div style={getTagsStyle()}>
-                  {service.tags.map((tag, tagIndex) => (
-                    <span 
-                      key={tagIndex} 
-                      style={{
-                        ...getTagStyle(),
-                        backgroundColor: selectedTag === tag ? '#007bff' : '#fff',
-                        color: selectedTag === tag ? '#fff' : '#333',
-                      }}
-                      onClick={() => handleTagClick(tag)}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+              <span style={getStatusStyle(service.status)}>
+                {service.status === 'UP' ? 'OK' : 'Not OK'}
+              </span>
+            </div>
+      
+            {service.status === 'DOWN' && (
+              <span style={{ 
+                fontSize: '14px', 
+                color: '#dc3545', 
+                marginBottom: '10px', 
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+              }}>
+                {service.messageDetails}
+              </span>
+            )}
+            
+            <span style={{ fontSize: '13px', color: '#555' }}>
+              <span style={{ color: '#593f03' }}>Last checked: {service.latestCheckTime}</span> 
+            </span>
+            {service.tags && (
+              <div style={getTagsStyle()}>
+                {service.tags.map((tag, tagIndex) => (
+                  <span 
+                    key={tagIndex} 
+                    style={{
+                      ...getTagStyle(),
+                      backgroundColor: selectedTag === tag ? '#007bff' : '#fff',
+                      color: selectedTag === tag ? '#fff' : '#333',
+                    }}
+                    onClick={() => handleTagClick(tag)}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
       )}
 
       <footer style={{

@@ -1,28 +1,42 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function App() {
+function Dashboard() {
   const [services, setServices] = useState([]);
   const [dashboardTitle, setDashboardTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [username, setUsername] = useState(localStorage.getItem('username'));
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (username == null) {
+      setShouldRedirect(true);
+    }
+  }, [username]);
 
   useEffect(() => {
     const fetchServiceData = async () => {
       try {
-        const response = await fetch('/api/services');
+        const response = await fetch('/api/services', {
+            method: 'GET',
+            headers: {
+                'Authorization': token
+            },
+        });
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          setError(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
         if (result.success) {
           const serviceArray = Object.keys(result.data.data).map(key => {
             const service = result.data.data[key];
-            // Calculate the latest check time
             const latestCheckTime = new Date(Date.now() - service.checkInterval * 1000);
 
-            // add service.kind to tags
             if (service.tags) {
               service.tags.push(service.kind);
             }
@@ -30,11 +44,10 @@ function App() {
             return {
               name: key,
               ...service,
-              latestCheckTime: latestCheckTime.toLocaleString(), // Convert to readable string
+              latestCheckTime: latestCheckTime.toLocaleString(),
             };
           });
 
-          // Sort the services: DOWN first, then UP
           serviceArray.sort((a, b) => {
             if (a.status === 'DOWN' && b.status === 'UP') return -1;
             if (a.status === 'UP' && b.status === 'DOWN') return 1;
@@ -56,7 +69,17 @@ function App() {
     fetchServiceData();
     const intervalId = setInterval(fetchServiceData, 5000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [token]);
+
+  const logout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+    setShouldRedirect(true);
+  };
+
+  if (shouldRedirect) {
+    return navigate('/');
+  }
 
   const keyframes = `
   @keyframes pulse {
@@ -71,7 +94,7 @@ function App() {
     }
   }
   `;
-  
+
   const getStatusStyle = (status) => ({
     padding: '5px 10px',
     borderRadius: '4px',
@@ -82,39 +105,32 @@ function App() {
     animation: 'pulse 1s infinite',
   });
 
-  const getTagsStyle = () => {
-    return {
-      display: 'flex',
-      flexWrap: 'wrap',
-      marginTop: '5px',
-      gap: '5px',
-    };
-  };
+  const getTagsStyle = () => ({
+    display: 'flex',
+    flexWrap: 'wrap',
+    marginTop: '5px',
+    gap: '5px',
+  });
 
-  const getTagStyle = () => {
-    return {
-      backgroundColor: '#fff',
-      color: '#333',
-      borderRadius: '12px',
-      padding: '3px 8px',
-      fontSize: '12px',
-      border: '1px solid #ddd',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-      cursor: 'pointer', // To indicate it's clickable
-    };
-  };
+  const getTagStyle = () => ({
+    backgroundColor: '#fff',
+    color: '#333',
+    borderRadius: '12px',
+    padding: '3px 8px',
+    fontSize: '12px',
+    border: '1px solid #ddd',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    cursor: 'pointer',
+  });
 
-  // Handle search term change
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  // Handle tag click to filter by tag
   const handleTagClick = (tag) => {
-    setSelectedTag(tag === selectedTag ? '' : tag); // Toggle tag filter
+    setSelectedTag(tag === selectedTag ? '' : tag);
   };
 
-  // Filter services based on search term and selected tag
   const filteredServices = services.filter(service => {
     const matchesSearchTerm = service.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTag = selectedTag ? service.tags.includes(selectedTag) : true;
@@ -123,7 +139,25 @@ function App() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4' }}>
-      <h1 style={{ textAlign: 'center' }}>{dashboardTitle}</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ textAlign: 'center', flex: 1 }}>{dashboardTitle}</h1>
+        <button
+          onClick={logout}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          Logout
+        </button>
+      </div>
+
       <input
         type="text"
         placeholder="Search services..."
@@ -200,8 +234,18 @@ function App() {
           ))}
         </ul>
       )}
+
+      <footer style={{
+        position: 'fixed',
+        bottom: '10px',
+        right: '10px',
+        fontSize: '15px',
+        color: '#666',
+      }}>
+        Status Page by <a href="https://github.com/telkomdev/tob" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'none' }}>Tob</a>
+      </footer>
     </div>
   );
 }
 
-export default App;
+export default Dashboard;

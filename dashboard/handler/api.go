@@ -3,13 +3,16 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/dashboard/shared"
+	"github.com/telkomdev/tob/dashboard/utils"
 )
 
 var (
@@ -21,18 +24,32 @@ type WebhookMessage struct {
 	Message string `json:"message"`
 }
 
+// LoginPayload type
+type LoginPayload struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 // DashboardHTTPHandler type
 type DashboardHTTPHandler struct {
-	serviceData      map[string]map[string]interface{}
-	logger           *log.Logger
-	webhookTobTokens []string
-	dashboardTitle   string
+	serviceData       map[string]map[string]interface{}
+	logger            *log.Logger
+	webhookTobTokens  []string
+	dashboardTitle    string
+	dashboardUsername string
+	dashboardPassword string
 }
 
 // Data type
 type Data struct {
 	Data           map[string]map[string]interface{} `json:"data"`
 	DashboardTitle string                            `json:"dashboardTitle"`
+}
+
+// LoginResponse type
+type LoginResponse struct {
+	Username  string `json:"username"`
+	JWTString string `json:"jwtString"`
 }
 
 // NewDashboardHTTPHandler DashboardHTTPHandler's constructor
@@ -102,12 +119,102 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 		serviceData[name] = services
 	}
 
+	dashboardUsername, ok := tobConfig["dashboardUsername"].(string)
+	if !ok {
+		return nil, errors.New("cannot parse dashboardUsername from configs")
+	}
+
+	dashboardPassword, ok := tobConfig["dashboardPassword"].(string)
+	if !ok {
+		return nil, errors.New("cannot parse dashboardPassword from configs")
+	}
+
 	return &DashboardHTTPHandler{
-		dashboardTitle:   defaultDashboardTitle,
-		serviceData:      serviceData,
-		logger:           logger,
-		webhookTobTokens: webhookTobTokens,
+		dashboardTitle:    defaultDashboardTitle,
+		serviceData:       serviceData,
+		logger:            logger,
+		webhookTobTokens:  webhookTobTokens,
+		dashboardUsername: dashboardUsername,
+		dashboardPassword: dashboardPassword,
 	}, nil
+}
+
+// Login will handle user login
+func (h *DashboardHTTPHandler) Login(jwtService utils.JwtService) http.HandlerFunc {
+	return func(resp http.ResponseWriter, req *http.Request) {
+
+		if req.Method != http.MethodPost {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    405,
+				Message: "http method not valid",
+				Data:    shared.EmptyJSON{},
+			}, 405)
+			return
+		}
+
+		var loginPayload LoginPayload
+
+		err := json.NewDecoder(req.Body).Decode(&loginPayload)
+		if err != nil {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    400,
+				Message: "login payload is not valid",
+				Data:    shared.EmptyJSON{},
+			}, 400)
+			return
+		}
+
+		hashedPassword, err := utils.Sha256Hex([]byte(loginPayload.Password))
+		if err != nil {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    400,
+				Message: "login payload is not valid",
+				Data:    shared.EmptyJSON{},
+			}, 400)
+			return
+		}
+
+		if h.dashboardUsername != loginPayload.Username || h.dashboardPassword != hashedPassword {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    401,
+				Message: "username or password is not valid",
+				Data:    shared.EmptyJSON{},
+			}, 401)
+			return
+		}
+
+		var claim utils.Claim
+		claim.Alg = utils.HS256
+		claim.Subject = h.dashboardUsername
+		claim.User.ID = h.dashboardUsername
+		claim.User.FullName = h.dashboardUsername
+		claim.User.Email = h.dashboardUsername
+
+		jwtString, err := jwtService.Generate(&claim, time.Hour*8766)
+		if err != nil {
+			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
+				Success: false,
+				Code:    401,
+				Message: "error generating jwt",
+				Data:    shared.EmptyJSON{},
+			}, 401)
+			return
+		}
+
+		shared.BuildJSONResponse(resp, shared.Response[LoginResponse]{
+			Success: true,
+			Code:    200,
+			Message: "login succeed",
+			Data: LoginResponse{
+				Username:  h.dashboardUsername,
+				JWTString: fmt.Sprintf("Bearer %s", jwtString),
+			},
+		}, 200)
+	}
 }
 
 // GetServices will return tob services

@@ -170,7 +170,7 @@ function Dashboard() {
               borderRadius: '5px',
               fontWeight: 'bold',
               cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
             }}
           >
             Logout

@@ -5,14 +5,13 @@ export default function Login(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const [disabledLogout, setDisabledLogout] = useState(false);
   const [messageLogin, setMessageLogin] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
-    if (storedUsername == null) {
-      setDisabledLogout(true);
+    if (storedUsername != null) {
+      setShouldRedirect(true);
     }
   }, []);
 

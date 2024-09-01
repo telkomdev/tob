@@ -110,7 +110,7 @@ func (r *JWT) Validate(alg Alg, tokenString string) (*Claim, error) {
 	}
 
 	if errToken != nil {
-		return nil, err
+		return nil, errToken
 	}
 
 	if !tokenParse.Valid {

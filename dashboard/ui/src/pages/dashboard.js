@@ -28,9 +28,7 @@ function Dashboard() {
                 'Authorization': token
             },
         });
-        if (!response.ok) {
-          setError(`HTTP error! status: ${response.status}`);
-        }
+
         const result = await response.json();
         if (result.success) {
           const serviceArray = Object.keys(result.data.data).map(key => {
@@ -57,7 +55,17 @@ function Dashboard() {
           setServices(serviceArray);
           setDashboardTitle(result.data.dashboardTitle);
         } else {
-          setError('Failed to retrieve services');
+          console.log(result)
+          if (result.message) {
+            // if token is expired, force logout
+            if (result.message.includes('token expired')) {
+              logout();
+            } else {
+              setError(result.message);
+            }
+          } else {
+            setError('Failed to retrieve services');
+          }
         }
       } catch (err) {
         setError(err.message);

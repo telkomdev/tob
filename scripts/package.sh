@@ -25,6 +25,11 @@ package()
     tar -czvf tob-${VERSION}.darwin-amd64.tar.gz tob
     rm tob
 
+    echo "packaging for Apple's OSX with Apple Chip"
+    make build-osx-arm
+    tar -czvf tob-${VERSION}.darwin-arm64.tar.gz tob
+    rm tob
+    
     echo "packaging for Linux"
     make build-linux
     tar -czvf tob-${VERSION}.linux-amd64.tar.gz tob
@@ -43,10 +48,12 @@ package()
 
     if [ "$OSNAME" = "linux" ]; then
         sha256sum tob-${VERSION}.darwin-amd64.tar.gz >> sha256sums.txt
+        sha256sum tob-${VERSION}.darwin-arm64.tar.gz >> sha256sums.txt
         sha256sum tob-${VERSION}.linux-amd64.tar.gz >> sha256sums.txt
         sha256sum tob-${VERSION}.win-amd64.zip >> sha256sums.txt
     else 
         shasum -a 256 tob-${VERSION}.darwin-amd64.tar.gz >> sha256sums.txt
+        shasum -a 256 tob-${VERSION}.darwin-arm64.tar.gz >> sha256sums.txt
         shasum -a 256 tob-${VERSION}.linux-amd64.tar.gz >> sha256sums.txt
         shasum -a 256 tob-${VERSION}.win-amd64.zip >> sha256sums.txt
     fi

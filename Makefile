@@ -10,6 +10,10 @@ build: build-ui
 build-osx: build-ui
 	GOOS=darwin GOARCH=amd64 go build -ldflags '-s -w' -o tob github.com/telkomdev/tob/cmd/tob
 
+# build for Apple's OSX 64 with Apple Chip
+build-osx-arm: build-ui
+	GOOS=darwin GOARCH=arm64 go build -ldflags '-s -w' -o tob github.com/telkomdev/tob/cmd/tob
+
 # build for Linux 64
 build-linux: build-ui
 	GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o tob github.com/telkomdev/tob/cmd/tob
@@ -23,6 +27,10 @@ build-win: build-ui
 # build for Apple's OSX 64
 build-http-agent-osx:
 	GOOS=darwin GOARCH=amd64 go build -ldflags '-s -w' -o tob-http-agent github.com/telkomdev/tob/cmd/tob-http-agent
+
+# build for Apple's OSX 64
+build-http-agent-osx-arm:
+	GOOS=darwin GOARCH=arm64 go build -ldflags '-s -w' -o tob-http-agent github.com/telkomdev/tob/cmd/tob-http-agent
 
 # build for Linux 64
 build-http-agent-linux:

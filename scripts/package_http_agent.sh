@@ -25,6 +25,11 @@ package()
     tar -czvf tob-http-agent-${VERSION}.darwin-amd64.tar.gz tob-http-agent
     rm tob-http-agent
 
+    echo "packaging for Apple's OSX with Apple Chip"
+    make build-http-agent-osx-arm
+    tar -czvf tob-http-agent-${VERSION}.darwin-arm64.tar.gz tob-http-agent
+    rm tob-http-agent
+
     echo "packaging for Linux"
     make build-http-agent-linux
     tar -czvf tob-http-agent-${VERSION}.linux-amd64.tar.gz tob-http-agent
@@ -38,9 +43,11 @@ package()
 
     if [ "$OSNAME" = "linux" ]; then
         sha256sum tob-http-agent-${VERSION}.darwin-amd64.tar.gz >> tob-http-agent-sha256sums.txt
+        sha256sum tob-http-agent-${VERSION}.darwin-arm64.tar.gz >> tob-http-agent-sha256sums.txt
         sha256sum tob-http-agent-${VERSION}.linux-amd64.tar.gz >> tob-http-agent-sha256sums.txt
     else 
         shasum -a 256 tob-http-agent-${VERSION}.darwin-amd64.tar.gz >> tob-http-agent-sha256sums.txt
+        shasum -a 256 tob-http-agent-${VERSION}.darwin-arm64.tar.gz >> tob-http-agent-sha256sums.txt
         shasum -a 256 tob-http-agent-${VERSION}.linux-amd64.tar.gz >> tob-http-agent-sha256sums.txt
     fi
 

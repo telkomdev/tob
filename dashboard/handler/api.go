@@ -195,8 +195,7 @@ func (h *DashboardHTTPHandler) Login(jwtService utils.JwtService) http.HandlerFu
 		claim.User.Email = h.dashboardUsername
 
 		// 1 year
-		// jwtString, err := jwtService.Generate(&claim, time.Hour*8766)
-		jwtString, err := jwtService.Generate(&claim, time.Second*10)
+		jwtString, err := jwtService.Generate(&claim, time.Hour*8766)
 		if err != nil {
 			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
 				Success: false,

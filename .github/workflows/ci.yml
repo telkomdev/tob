@@ -32,7 +32,7 @@ jobs:
         run: bash ./scripts/install_ubuntu_deps
 
       - name: Install dashboard dependencies
-        run: npm --prefix dashboard/ui/ install
+        run: CI='' npm --prefix dashboard/ui/ install
 
       - name: Run packaging
-        run: bash ./scripts/package.sh 0.0.0.dummy
+        run: CI='' bash ./scripts/package.sh 0.0.0.dummy

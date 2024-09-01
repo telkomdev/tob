@@ -153,6 +153,7 @@ function Dashboard() {
         <div style={{ flex: '1 1 auto', marginBottom: '10px' }}>
           <img
             src="tob.png"
+            title='Tob the Bot (https://github.com/telkomdev/tob)'
             alt="Logo"
             style={{
               width: '100px',
@@ -251,10 +252,17 @@ function Dashboard() {
                 {service.messageDetails}
               </span>
             )}
-            
+
+            {service.pics && service.pics.length > 0 && (
+              <span style={{ fontSize: '14px', color: '#555', marginBottom: '10px', fontWeight: 'bold' }}>
+                <span style={{ color: '#04a0bf' }}>PICs: {service.pics.join(', ')}</span> 
+              </span>
+            )}
+
             <span style={{ fontSize: '13px', color: '#555' }}>
               <span style={{ color: '#593f03' }}>Last checked: {service.latestCheckTime}</span> 
             </span>
+            
             {service.tags && (
               <div style={getTagsStyle()}>
                 {service.tags.map((tag, tagIndex) => (

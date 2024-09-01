@@ -23,16 +23,16 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       
-      - name: Use Node 18
+      - name: Use Node 16
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 16
           
       - name: Install Ubuntu dependecies
         run: bash ./scripts/install_ubuntu_deps
 
       - name: Install dashboard dependencies
         run: npm --prefix dashboard/ui/ install
-        
+
       - name: Run packaging
         run: bash ./scripts/package.sh 0.0.0.dummy

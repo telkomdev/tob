@@ -344,4 +344,4 @@ You can now access the Monitoring Dashboard on port 9115, or the port you specif
 $ http://localhost:9115
 ```
 
-[<img src="./assets/tob_dashboard.PNG" width="600">](https://github.com/telkomdev/tob)
+[<img src="./assets/tob_dashboard.png" width="600">](https://github.com/telkomdev/tob)

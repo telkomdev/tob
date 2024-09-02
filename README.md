@@ -109,6 +109,7 @@ currently tob supports below `KIND` of services
 - **kafka**
 - **mongodb**
 - **mysql**
+- **oracle**
 - **postgresql**
 - **redis**
 - **web**
@@ -313,3 +314,34 @@ The `tobToken` variable must be the same as the `tobToken` config located in the
     "message": "mysql_cluster_1 is DOWN" 
 }
 ```
+
+### Tob Dashboard Monitoring
+
+
+This monitoring dashboard will automatically run on the default `port: 9115` when Tob is run. You can change the default port, dashboard title, JWT Key, username and password in the configuration file.
+
+```json
+    "dashboardHttpPort": 9115,
+    "dashboardTitle": "My Product Monitoring Dashboard",
+    "dashboardJwtKey": "czNWm7vGU1usgoVBcuuDCDJWi4wAngTn",
+    "dashboardUsername": "tob",
+    "dashboardPassword": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+```
+
+
+`dashboardPassword` is generated with the SHA256 Hash function. You can regenerate dashboardPassword with the `gen_sha256_pass` script in the `scripts` folder.
+
+```shell
+$ ./scripts/gen_sha256_pass.sh my-very-secret-pass
+Generating SHA256 from 'my-very-secret-pass'
+6386253716d4ae82864e0cfac19de10db5ba1824b1e5a63f209dcb178a9d82e3
+```
+
+
+You can now access the Monitoring Dashboard on port 9115, or the port you specified.
+
+```
+$ http://localhost:9115
+```
+
+[<img src="./assets/tob_dashboard.PNG" width="600">](https://github.com/telkomdev/tob)

@@ -3,7 +3,7 @@ package tob
 const (
 	// Version number
 
-	Version = "2.0.3"
+	Version = "2.0.4"
 
 	// OK service status
 	OK = "OK"

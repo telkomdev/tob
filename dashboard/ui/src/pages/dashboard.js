@@ -145,8 +145,9 @@ function Dashboard() {
 
   const filteredServices = services.filter(service => {
     const matchesSearchTerm = service.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTagSearch = service.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesTag = selectedTag ? service.tags.includes(selectedTag) : true;
-    return matchesSearchTerm && matchesTag;
+    return (matchesSearchTerm || matchesTagSearch) && matchesTag;
   });
 
   return (

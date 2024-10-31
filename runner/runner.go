@@ -198,8 +198,8 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 					notificatorMessage = fmt.Sprintf("%s is DOWN | %s", n, s.GetMessage())
 				}
 
-				if s.GetNotificators() != nil {
-					for _, notificator := range s.GetNotificators() {
+				for _, notificator := range s.GetNotificators() {
+					if !tob.IsNilish(notificator) {
 						if notificator.IsEnabled() {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {
@@ -220,8 +220,8 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
 				}
 
-				if s.GetNotificators() != nil {
-					for _, notificator := range s.GetNotificators() {
+				for _, notificator := range s.GetNotificators() {
+					if !tob.IsNilish(notificator) {
 						if notificator.IsEnabled() {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {

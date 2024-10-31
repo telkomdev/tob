@@ -214,12 +214,7 @@ func (f *AirflowFlower) SetNotificatorConfig(configs config.Config) {
 
 // GetNotificators will return notificators
 func (f *AirflowFlower) GetNotificators() []tob.Notificator {
-	notificators, err := tob.InitNotificatorFactory(f.notificatorConfig, f.verbose)
-	if err != nil {
-		f.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", f.Name())
-		return nil
-	}
-	return notificators
+	return tob.InitNotificatorFactory(f.notificatorConfig, f.verbose)
 }
 
 // Stop will receive stop channel

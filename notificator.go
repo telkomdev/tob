@@ -1,6 +1,8 @@
 package tob
 
 import (
+	"fmt"
+
 	"github.com/telkomdev/tob/config"
 
 	"github.com/telkomdev/tob/notificators/discord"
@@ -23,35 +25,38 @@ type Notificator interface {
 }
 
 // InitNotificatorFactory will init all notificator
-func InitNotificatorFactory(configs config.Config, verbose bool) ([]Notificator, error) {
+func InitNotificatorFactory(configs config.Config, verbose bool) []Notificator {
 	// discord notificator
 	discordNotificator, err := discord.NewDiscord(configs, verbose, Logger)
 	if err != nil {
-		return nil, err
+		discordNotificator = nil
 	}
 
 	// email notificator
 	emailNotificator, err := email.NewEmail(configs)
 	if err != nil {
-		return nil, err
+
+		emailNotificator = nil
+		fmt.Println("email err, set nil")
+		fmt.Println(emailNotificator)
 	}
 
 	// slack notificator
 	slackNotificator, err := slack.NewSlack(configs)
 	if err != nil {
-		return nil, err
+		slackNotificator = nil
 	}
 
 	// telegram notificator
 	telegramNotificator, err := telegram.NewTelegram(configs)
 	if err != nil {
-		return nil, err
+		telegramNotificator = nil
 	}
 
 	// webhook notificator
 	webhookNotificator, err := webhook.NewWebhook(configs, verbose, Logger)
 	if err != nil {
-		return nil, err
+		webhookNotificator = nil
 	}
 
 	notificators := []Notificator{
@@ -62,5 +67,5 @@ func InitNotificatorFactory(configs config.Config, verbose bool) ([]Notificator,
 		webhookNotificator,
 	}
 
-	return notificators, nil
+	return notificators
 }

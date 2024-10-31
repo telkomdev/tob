@@ -208,12 +208,7 @@ func (e *Elasticsearch) SetNotificatorConfig(configs config.Config) {
 
 // GetNotificators will return notificators
 func (e *Elasticsearch) GetNotificators() []tob.Notificator {
-	notificators, err := tob.InitNotificatorFactory(e.notificatorConfig, e.verbose)
-	if err != nil {
-		e.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", e.Name())
-		return nil
-	}
-	return notificators
+	return tob.InitNotificatorFactory(e.notificatorConfig, e.verbose)
 }
 
 // Stop will receive stop channel

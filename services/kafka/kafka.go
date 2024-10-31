@@ -253,12 +253,7 @@ func (d *Kafka) SetNotificatorConfig(configs config.Config) {
 
 // GetNotificators will return notificators
 func (d *Kafka) GetNotificators() []tob.Notificator {
-	notificators, err := tob.InitNotificatorFactory(d.notificatorConfig, d.verbose)
-	if err != nil {
-		d.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", d.Name())
-		return nil
-	}
-	return notificators
+	return tob.InitNotificatorFactory(d.notificatorConfig, d.verbose)
 }
 
 // Stop will receive stop channel

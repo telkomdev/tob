@@ -243,10 +243,6 @@ func (r *Runner) Run(ctx context.Context) {
 		panic("service not initialized yet")
 	}
 
-	// if r.notificators == nil || len(r.notificators) <= 0 {
-	// 	panic("notificator cannot be nil")
-	// }
-
 	// close waiter's channel indicates that no more values will be sent on it
 	defer func() { r.waiter.Close() }()
 

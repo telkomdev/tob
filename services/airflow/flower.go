@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
@@ -16,17 +17,18 @@ import (
 
 // Airflow flower service
 type AirflowFlower struct {
-	url           string
-	recovered     bool
-	lastDownTime  string
-	workers       []map[string]interface{}
-	workerErr     bool
-	enabled       bool
-	verbose       bool
-	logger        *log.Logger
-	checkInterval int
-	stopChan      chan bool
-	message       string
+	url               string
+	recovered         bool
+	lastDownTime      string
+	workers           []map[string]interface{}
+	workerErr         bool
+	enabled           bool
+	verbose           bool
+	logger            *log.Logger
+	checkInterval     int
+	stopChan          chan bool
+	message           string
+	notificatorConfig config.Config
 }
 
 // Airflow flower's constructor
@@ -203,6 +205,21 @@ func (af *AirflowFlower) GetMessage() string {
 // SetConfig will set config
 func (f *AirflowFlower) SetConfig(configs config.Config) {
 
+}
+
+// SetNotificatorConfig will set config
+func (f *AirflowFlower) SetNotificatorConfig(configs config.Config) {
+	f.notificatorConfig = configs
+}
+
+// GetNotificators will return notificators
+func (f *AirflowFlower) GetNotificators() []tob.Notificator {
+	notificators, err := tob.InitNotificatorFactory(f.notificatorConfig, f.verbose)
+	if err != nil {
+		f.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", f.Name())
+		return nil
+	}
+	return notificators
 }
 
 // Stop will receive stop channel

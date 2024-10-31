@@ -14,7 +14,8 @@ type waiter struct {
 	Sig      chan empty
 }
 
-func newWaiter(c uint) Waiter {
+// NewWaiter will return new Waiter
+func NewWaiter(c uint) Waiter {
 	sig := make(chan empty, c)
 	return &waiter{Capacity: c, Sig: sig}
 }

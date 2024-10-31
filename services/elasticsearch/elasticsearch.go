@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
@@ -15,15 +16,16 @@ import (
 
 // Elasticsearch service
 type Elasticsearch struct {
-	url           string
-	recovered     bool
-	lastDownTime  string
-	enabled       bool
-	verbose       bool
-	logger        *log.Logger
-	checkInterval int
-	stopChan      chan bool
-	message       string
+	url               string
+	recovered         bool
+	lastDownTime      string
+	enabled           bool
+	verbose           bool
+	logger            *log.Logger
+	checkInterval     int
+	stopChan          chan bool
+	message           string
+	notificatorConfig config.Config
 }
 
 // Elasticsearch's constructor
@@ -197,6 +199,21 @@ func (e *Elasticsearch) GetMessage() string {
 // SetConfig will set config
 func (e *Elasticsearch) SetConfig(configs config.Config) {
 
+}
+
+// SetNotificatorConfig will set config
+func (e *Elasticsearch) SetNotificatorConfig(configs config.Config) {
+	e.notificatorConfig = configs
+}
+
+// GetNotificators will return notificators
+func (e *Elasticsearch) GetNotificators() []tob.Notificator {
+	notificators, err := tob.InitNotificatorFactory(e.notificatorConfig, e.verbose)
+	if err != nil {
+		e.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", e.Name())
+		return nil
+	}
+	return notificators
 }
 
 // Stop will receive stop channel

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
@@ -27,6 +28,7 @@ type Airflow struct {
 	checkInterval      int
 	stopChan           chan bool
 	message            string
+	notificatorConfig  config.Config
 }
 
 // Airflow's constructor
@@ -210,6 +212,21 @@ func (a *Airflow) GetMessage() string {
 // SetConfig will set config
 func (a *Airflow) SetConfig(configs config.Config) {
 
+}
+
+// SetNotificatorConfig will set config
+func (a *Airflow) SetNotificatorConfig(configs config.Config) {
+	a.notificatorConfig = configs
+}
+
+// GetNotificators will return notificators
+func (a *Airflow) GetNotificators() []tob.Notificator {
+	notificators, err := tob.InitNotificatorFactory(a.notificatorConfig, a.verbose)
+	if err != nil {
+		a.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", a.Name())
+		return nil
+	}
+	return notificators
 }
 
 // Stop will receive stop channel

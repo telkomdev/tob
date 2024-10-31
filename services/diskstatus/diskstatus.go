@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/data"
 	"github.com/telkomdev/tob/httpx"
@@ -17,16 +18,17 @@ import (
 
 // DiskStatus service
 type DiskStatus struct {
-	url           string
-	recovered     bool
-	lastDownTime  string
-	enabled       bool
-	verbose       bool
-	logger        *log.Logger
-	checkInterval int
-	stopChan      chan bool
-	message       string
-	configs       config.Config
+	url               string
+	recovered         bool
+	lastDownTime      string
+	enabled           bool
+	verbose           bool
+	logger            *log.Logger
+	checkInterval     int
+	stopChan          chan bool
+	message           string
+	configs           config.Config
+	notificatorConfig config.Config
 }
 
 type target struct {
@@ -255,6 +257,21 @@ func (d *DiskStatus) GetMessage() string {
 // SetConfig will set config
 func (d *DiskStatus) SetConfig(configs config.Config) {
 	d.configs = configs
+}
+
+// SetNotificatorConfig will set config
+func (d *DiskStatus) SetNotificatorConfig(configs config.Config) {
+	d.notificatorConfig = configs
+}
+
+// GetNotificators will return notificators
+func (d *DiskStatus) GetNotificators() []tob.Notificator {
+	notificators, err := tob.InitNotificatorFactory(d.notificatorConfig, d.verbose)
+	if err != nil {
+		d.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", d.Name())
+		return nil
+	}
+	return notificators
 }
 
 // Stop will receive stop channel

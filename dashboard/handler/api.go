@@ -32,12 +32,12 @@ type LoginPayload struct {
 
 // DashboardHTTPHandler type
 type DashboardHTTPHandler struct {
-	serviceData       map[string]map[string]interface{}
-	logger            *log.Logger
-	webhookTobTokens  []string
-	dashboardTitle    string
-	dashboardUsername string
-	dashboardPassword string
+	serviceData           map[string]map[string]interface{}
+	logger                *log.Logger
+	dashboardWebhookToken string
+	dashboardTitle        string
+	dashboardUsername     string
+	dashboardPassword     string
 }
 
 // Data type
@@ -58,32 +58,9 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 		defaultDashboardTitle = dashboardTitle
 	}
 
-	notificatorConfigInterface, ok := tobConfig["notificator"]
+	dashboardWebhookToken, ok := tobConfig["dashboardWebhookToken"].(string)
 	if !ok {
-		return nil, errors.New("notificator key from tob config is undefined")
-	}
-
-	notificators, ok := notificatorConfigInterface.(map[string]interface{})
-	if !ok {
-		return nil, errors.New("cannot convert tob config notificator to map")
-	}
-
-	webhookNotificatorInterfaces, ok := notificators["webhook"]
-	if !ok {
-		return nil, errors.New("webhook notificator key is not in config")
-	}
-
-	var webhookTobTokens []string
-	webhookConfigList := webhookNotificatorInterfaces.([]interface{})
-	for _, webhookConfigInterface := range webhookConfigList {
-		webhookConfig := webhookConfigInterface.(map[string]interface{})
-
-		webhookTobToken, ok := webhookConfig["tobToken"].(string)
-		if !ok {
-			return nil, errors.New("cannot convert webhookConfig tobToken to string")
-		}
-
-		webhookTobTokens = append(webhookTobTokens, strings.Trim(webhookTobToken, " "))
+		return nil, errors.New("dashboardWebhookToken from tob config is undefined")
 	}
 
 	serviceConfigInterface, ok := tobConfig["service"]
@@ -117,6 +94,7 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 		services["status"] = "UP"
 		services["url"] = ""
 		serviceData[name] = services
+
 	}
 
 	dashboardUsername, ok := tobConfig["dashboardUsername"].(string)
@@ -130,12 +108,12 @@ func NewDashboardHTTPHandler(tobConfig config.Config, logger *log.Logger) (*Dash
 	}
 
 	return &DashboardHTTPHandler{
-		dashboardTitle:    defaultDashboardTitle,
-		serviceData:       serviceData,
-		logger:            logger,
-		webhookTobTokens:  webhookTobTokens,
-		dashboardUsername: dashboardUsername,
-		dashboardPassword: dashboardPassword,
+		dashboardTitle:        defaultDashboardTitle,
+		serviceData:           serviceData,
+		logger:                logger,
+		dashboardWebhookToken: dashboardWebhookToken,
+		dashboardUsername:     dashboardUsername,
+		dashboardPassword:     dashboardPassword,
 	}, nil
 }
 
@@ -249,7 +227,6 @@ func (h *DashboardHTTPHandler) GetServices() http.HandlerFunc {
 // HandleTobWebhook will handle webhook that send by Tob
 func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 	return func(resp http.ResponseWriter, req *http.Request) {
-
 		if req.Method != http.MethodPost {
 			shared.BuildJSONResponse(resp, shared.Response[shared.EmptyJSON]{
 				Success: false,
@@ -271,13 +248,7 @@ func (h *DashboardHTTPHandler) HandleTobWebhook() http.HandlerFunc {
 		}
 
 		xTobTokenInConfig := func() bool {
-			for _, token := range h.webhookTobTokens {
-				if req.Header["X-Tob-Token"][0] == token {
-					return true
-				}
-			}
-
-			return false
+			return req.Header["X-Tob-Token"][0] == h.dashboardWebhookToken
 		}
 
 		if !xTobTokenInConfig() {

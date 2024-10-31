@@ -96,6 +96,12 @@ type Service interface {
 	// SetConfig will set config
 	SetConfig(configs config.Config)
 
+	// SetNotificatorConfig will set config
+	SetNotificatorConfig(configs config.Config)
+
+	// GetNotificators will return notificators
+	GetNotificators() []Notificator
+
 	// Stop will receive stop channel
 	Stop() chan bool
 }

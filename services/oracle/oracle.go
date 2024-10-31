@@ -7,22 +7,24 @@ import (
 	"time"
 
 	ora "github.com/sijms/go-ora/v2"
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/util"
 )
 
 // Oracle service
 type Oracle struct {
-	url           string
-	recovered     bool
-	lastDownTime  string
-	enabled       bool
-	verbose       bool
-	logger        *log.Logger
-	db            *ora.Connection
-	checkInterval int
-	stopChan      chan bool
-	message       string
+	url               string
+	recovered         bool
+	lastDownTime      string
+	enabled           bool
+	verbose           bool
+	logger            *log.Logger
+	db                *ora.Connection
+	checkInterval     int
+	stopChan          chan bool
+	message           string
+	notificatorConfig config.Config
 }
 
 // NewOracle Oracle's constructor
@@ -199,6 +201,21 @@ func (d *Oracle) GetMessage() string {
 // SetConfig will set config
 func (d *Oracle) SetConfig(configs config.Config) {
 
+}
+
+// SetNotificatorConfig will set config
+func (d *Oracle) SetNotificatorConfig(configs config.Config) {
+	d.notificatorConfig = configs
+}
+
+// GetNotificators will return notificators
+func (d *Oracle) GetNotificators() []tob.Notificator {
+	notificators, err := tob.InitNotificatorFactory(d.notificatorConfig, d.verbose)
+	if err != nil {
+		d.logger.Printf("Warning: %s service does not activate Notifications, GetNotificators() will be nil\n", d.Name())
+		return nil
+	}
+	return notificators
 }
 
 // Stop will receive stop channel

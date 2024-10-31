@@ -781,7 +781,7 @@
     "dashboardJwtKey": "czNWm7vGU1usgoVBcuuDCDJWi4wAngTn",
     "dashboardUsername": "tob",
     "dashboardPassword": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-    "dashboardWebhookToken": "tob-token-12345" ,
+    "dashboardWebhookToken": "tob-token-12345",
 
     "version": "2.0.4"
 }

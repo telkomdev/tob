@@ -11,6 +11,7 @@ import (
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/dashboard/server"
+	"github.com/telkomdev/tob/runner"
 )
 
 func main() {
@@ -46,18 +47,18 @@ func main() {
 	}
 
 	// init Notificator
-	notificators, err := tob.InitNotificatorFactory(configs, args.Verbose)
-	if err != nil {
-		fmt.Println("error: ", err)
-		os.Exit(1)
-	}
+	// notificators, err := tob.InitNotificatorFactory(configs, args.Verbose)
+	// if err != nil {
+	// 	fmt.Println("error: ", err)
+	// 	os.Exit(1)
+	// }
 
 	ctx, cancel := context.WithCancel(context.Background())
 	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer func() { cancel() }()
 
 	// runner
-	runner, err := tob.NewRunner(notificators, configs, args.Verbose)
+	runner, err := runner.NewRunner(configs, args.Verbose)
 	if err != nil {
 		fmt.Println("error: ", err)
 		os.Exit(1)
@@ -90,7 +91,7 @@ func main() {
 
 }
 
-func waitNotify(kill chan os.Signal, runner *tob.Runner, dashboardServer *server.HTTPServer) {
+func waitNotify(kill chan os.Signal, runner *runner.Runner, dashboardServer *server.HTTPServer) {
 	select {
 	case <-kill:
 		dashboardServer.Exit()

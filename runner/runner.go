@@ -1,4 +1,4 @@
-package tob
+package runner
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
 	"github.com/telkomdev/tob/services/airflow"
 	"github.com/telkomdev/tob/services/diskstatus"
@@ -23,54 +24,51 @@ import (
 
 // Runner the tob runner
 type Runner struct {
-	configs      config.Config
-	services     map[string]Service
-	stopChan     chan bool
-	verbose      bool
-	initialized  bool
-	notificators []Notificator
-	waiter       Waiter
+	configs     config.Config
+	services    map[string]tob.Service
+	stopChan    chan bool
+	verbose     bool
+	initialized bool
+	waiter      tob.Waiter
 }
 
 // NewRunner Runner's constructor
-func NewRunner(notificators []Notificator, configs config.Config, verbose bool) (*Runner, error) {
+func NewRunner(configs config.Config, verbose bool) (*Runner, error) {
 	runner := new(Runner)
 	runner.configs = configs
 
 	stopChan := make(chan bool, 1)
 	runner.stopChan = stopChan
 
-	services := make(map[string]Service)
+	services := make(map[string]tob.Service)
 	runner.services = services
 
 	runner.verbose = verbose
 
-	runner.notificators = notificators
-
 	return runner, nil
 }
 
-func initServiceKind(serviceKind ServiceKind, verbose bool) (Service, bool) {
-	services := make(map[ServiceKind]Service)
-	services[Airflow] = airflow.NewAirflow(verbose, Logger)
-	services[AirflowFlower] = airflow.NewAirflowFlower(verbose, Logger)
-	services[Dummy] = dummy.NewDummy(verbose, Logger)
-	services[DiskStatus] = diskstatus.NewDiskStatus(verbose, Logger)
-	services[Kafka] = kafka.NewKafka(verbose, Logger)
-	services[MongoDB] = mongodb.NewMongo(verbose, Logger)
-	services[MySQL] = mysqldb.NewMySQL(verbose, Logger)
-	services[Postgresql] = postgres.NewPostgres(verbose, Logger)
-	services[Oracle] = oracle.NewOracle(verbose, Logger)
-	services[Redis] = redisdb.NewRedis(verbose, Logger)
-	services[Web] = web.NewWeb(verbose, Logger)
-	services[Elasticsearch] = elasticsearch.NewElasticsearch(verbose, Logger)
+func initServiceKind(serviceKind tob.ServiceKind, verbose bool) (tob.Service, bool) {
+	services := make(map[tob.ServiceKind]tob.Service)
+	services[tob.Airflow] = airflow.NewAirflow(verbose, tob.Logger)
+	services[tob.AirflowFlower] = airflow.NewAirflowFlower(verbose, tob.Logger)
+	services[tob.Dummy] = dummy.NewDummy(verbose, tob.Logger)
+	services[tob.DiskStatus] = diskstatus.NewDiskStatus(verbose, tob.Logger)
+	services[tob.Kafka] = kafka.NewKafka(verbose, tob.Logger)
+	services[tob.MongoDB] = mongodb.NewMongo(verbose, tob.Logger)
+	services[tob.MySQL] = mysqldb.NewMySQL(verbose, tob.Logger)
+	services[tob.Postgresql] = postgres.NewPostgres(verbose, tob.Logger)
+	services[tob.Oracle] = oracle.NewOracle(verbose, tob.Logger)
+	services[tob.Redis] = redisdb.NewRedis(verbose, tob.Logger)
+	services[tob.Web] = web.NewWeb(verbose, tob.Logger)
+	services[tob.Elasticsearch] = elasticsearch.NewElasticsearch(verbose, tob.Logger)
 
 	s, ok := services[serviceKind]
 	return s, ok
 }
 
 // Add will add new service to Runner
-func (r *Runner) Add(service Service) {
+func (r *Runner) Add(service tob.Service) {
 	if service != nil {
 		r.services[service.Name()] = service
 	}
@@ -96,7 +94,7 @@ func (r *Runner) InitServices() error {
 			return errors.New("invalid config file")
 		}
 
-		Logger.Println(name)
+		tob.Logger.Println(name)
 
 		urlStr, ok := conf["url"].(string)
 		if !ok {
@@ -127,7 +125,7 @@ func (r *Runner) InitServices() error {
 			return errors.New("invalid config file")
 		}
 
-		if s, ok := initServiceKind(ServiceKind(serviceKind), r.verbose); ok {
+		if s, ok := initServiceKind(tob.ServiceKind(serviceKind), r.verbose); ok {
 			r.services[name] = s
 		}
 
@@ -143,6 +141,7 @@ func (r *Runner) InitServices() error {
 			service.SetCheckInterval(checkInterval)
 			service.Enable(serviceEnabled)
 			service.SetConfig(conf)
+			service.SetNotificatorConfig(conf)
 
 			// by default service is recovered
 			service.SetRecover(true)
@@ -160,20 +159,20 @@ func (r *Runner) InitServices() error {
 	r.initialized = true
 
 	// set waiter capacity with amount of service to be executed
-	r.waiter = newWaiter(uint(totalServiceToBeExecuted))
+	r.waiter = tob.NewWaiter(uint(totalServiceToBeExecuted))
 	if r.verbose {
-		Logger.Printf("total service to be executed: %d\n", uint(totalServiceToBeExecuted))
+		tob.Logger.Printf("total service to be executed: %d\n", uint(totalServiceToBeExecuted))
 	}
 
 	return nil
 }
 
-func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificators []Notificator) {
+func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 
 	for {
 		select {
 		case <-s.Stop():
-			Logger.Printf("runner service %s received stop channel, cleanup resource now !!\n", n)
+			tob.Logger.Printf("runner service %s received stop channel, cleanup resource now !!\n", n)
 
 			// stop ticker
 			t.Stop()
@@ -188,7 +187,7 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 
 			resp := s.Ping()
 			respStr := string(resp)
-			if respStr == NotOk && s.IsRecover() {
+			if respStr == tob.NotOk && s.IsRecover() {
 				// set last downtime
 				s.SetLastDownTimeNow()
 				// set recover to false
@@ -199,17 +198,20 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					notificatorMessage = fmt.Sprintf("%s is DOWN | %s", n, s.GetMessage())
 				}
 
-				for _, notificator := range notificators {
-					if notificator.IsEnabled() {
-						err := notificator.Send(notificatorMessage)
-						if err != nil {
-							Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+				if s.GetNotificators() != nil {
+					for _, notificator := range s.GetNotificators() {
+						if notificator.IsEnabled() {
+							err := notificator.Send(notificatorMessage)
+							if err != nil {
+								tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+							}
 						}
 					}
 				}
+
 			}
 
-			if respStr == OK && !s.IsRecover() {
+			if respStr == tob.OK && !s.IsRecover() {
 				// set recover to true
 				s.SetRecover(true)
 
@@ -218,17 +220,19 @@ func healthCheck(n string, s Service, t *time.Ticker, waiter Waiter, notificator
 					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
 				}
 
-				for _, notificator := range notificators {
-					if notificator.IsEnabled() {
-						err := notificator.Send(notificatorMessage)
-						if err != nil {
-							Logger.Printf("notificator %s error: %s\n", notificator.Provider(), err.Error())
+				if s.GetNotificators() != nil {
+					for _, notificator := range s.GetNotificators() {
+						if notificator.IsEnabled() {
+							err := notificator.Send(notificatorMessage)
+							if err != nil {
+								tob.Logger.Printf("notificator %s error: %s\n", notificator.Provider(), err.Error())
+							}
 						}
 					}
 				}
 			}
 
-			Logger.Printf("%s => %s\n", n, respStr)
+			tob.Logger.Printf("%s => %s\n", n, respStr)
 		}
 	}
 }
@@ -239,9 +243,9 @@ func (r *Runner) Run(ctx context.Context) {
 		panic("service not initialized yet")
 	}
 
-	if r.notificators == nil || len(r.notificators) <= 0 {
-		panic("notificator cannot be nil")
-	}
+	// if r.notificators == nil || len(r.notificators) <= 0 {
+	// 	panic("notificator cannot be nil")
+	// }
 
 	// close waiter's channel indicates that no more values will be sent on it
 	defer func() { r.waiter.Close() }()
@@ -252,7 +256,7 @@ func (r *Runner) Run(ctx context.Context) {
 			ticker := time.NewTicker(time.Second * time.Duration(service.GetCheckInterval()))
 
 			// run all services health check on its goroutine
-			go healthCheck(name, service, ticker, r.waiter, r.notificators)
+			go healthCheck(name, service, ticker, r.waiter)
 
 		}
 	}
@@ -266,7 +270,7 @@ func (r *Runner) Run(ctx context.Context) {
 		// compiler, so they are very efficient.
 		select {
 		case <-ctx.Done():
-			Logger.Println("runner context canceled")
+			tob.Logger.Println("runner context canceled")
 			r.cleanup()
 
 			// wait all service's goroutine to stop
@@ -277,7 +281,7 @@ func (r *Runner) Run(ctx context.Context) {
 
 		select {
 		case <-r.stopChan:
-			Logger.Println("runner received stop channel, cleanup resource now !!")
+			tob.Logger.Println("runner received stop channel, cleanup resource now !!")
 			r.cleanup()
 
 			// wait all service's goroutine to stop
@@ -285,7 +289,7 @@ func (r *Runner) Run(ctx context.Context) {
 			return
 
 		case <-ctx.Done():
-			Logger.Println("runner context canceled")
+			tob.Logger.Println("runner context canceled")
 			r.cleanup()
 
 			// wait all service's goroutine to stop
@@ -307,7 +311,7 @@ func (r *Runner) cleanup() error {
 		if service != nil && service.IsEnabled() {
 			err := service.Close()
 			if err != nil {
-				Logger.Println(err)
+				tob.Logger.Println(err)
 			}
 
 			// send stop channel

@@ -6,7 +6,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "postgresql_two": {
@@ -15,7 +73,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "oracle_one": {
@@ -24,7 +140,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "mongodb_one": {
@@ -33,7 +207,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "mysql_one": {
@@ -42,7 +274,65 @@
             "checkInterval": 5,
             "enable": false,
             "tags": ["product 1"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "redis_one": {
@@ -51,7 +341,65 @@
             "checkInterval": 5,
             "enable": false,
             "tags": ["product 1", "product 2", "product 3"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "minio_one": {
@@ -60,7 +408,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "elasticsearch_cluster_one": {
@@ -69,7 +475,65 @@
             "checkInterval": 10,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["alex", "jason"]
+            "pics": ["alex", "jason"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "kafka_cluster_one": {
@@ -78,7 +542,65 @@
             "checkInterval": 5,
             "enable": false,
             "tags": ["product 1", "product 2"],
-            "pics": ["bimo", "walker"]
+            "pics": ["bimo", "walker"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "kafka_local": {
@@ -114,7 +636,132 @@
             "checkInterval": 5,
             "enable": true,
             "tags": ["product 1", "product 2"],
-            "pics": ["ryan", "walker"]
+            "pics": ["ryan", "walker"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
+        },
+
+        "google": {
+            "kind": "web",
+            "url": "https://www.google.com",
+            "checkInterval": 5,
+            "enable": true,
+            "tags": ["product 3", "product 6"],
+            "pics": ["ryan", "walker"],
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         },
 
         "server_1_storage_status": {
@@ -129,70 +776,12 @@
         }
     },
 
-    "notificator": {
-        "discord": [
-            {
-                "name": "BoyBot",
-                "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
-                "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
-                "mentions": [
-                    "@8XXXXXXXXXXXXXXXXX",
-                    "@here"
-                ],
-                "enable": false
-            },
-            {
-                "name": "BoyBot2",
-                "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
-                "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
-                "mentions": [
-                    "@8XXXXXXXXXXXXXXXXX",
-                    "@here"
-                ],
-                "enable": false
-            }
-        ],
-
-        "slack": {
-            "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
-            "mentions": [
-                "@UXXXXXXXX",
-                "!here"
-            ],
-            "enable": false
-        },
-
-        "email": {
-            "authEmail": "postmaster@sandboxxxx.mailgun.org",
-            "authPassword": "xxxx",
-            "authHost": "smtp.mailgun.org",
-            "smtpAddress": "smtp.mailgun.org:587",
-            "from": "your_email_sender@gmail.com",
-            "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
-            "subject": "Tob Notification",
-            "enable": false
-        },
-
-        "telegram": {
-            "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
-            "groupId": "-111111111",
-            "enable": false
-        },
-
-        "webhook": [
-            {
-                "url": "http://localhost:9115/api/tob/webhook",
-                "tobToken": "tob-token-12345",
-                "enable": true
-            }
-        ]
-    },
-
     "dashboardHttpPort": 9115,
     "dashboardTitle": "My Product Monitoring Dashboard",
     "dashboardJwtKey": "czNWm7vGU1usgoVBcuuDCDJWi4wAngTn",
     "dashboardUsername": "tob",
     "dashboardPassword": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+    "dashboardWebhookToken": "tob-token-12345" ,
 
     "version": "2.0.4"
 }

@@ -1,8 +1,6 @@
 package tob
 
 import (
-	"fmt"
-
 	"github.com/telkomdev/tob/config"
 
 	"github.com/telkomdev/tob/notificators/discord"
@@ -35,10 +33,7 @@ func InitNotificatorFactory(configs config.Config, verbose bool) []Notificator {
 	// email notificator
 	emailNotificator, err := email.NewEmail(configs)
 	if err != nil {
-
 		emailNotificator = nil
-		fmt.Println("email err, set nil")
-		fmt.Println(emailNotificator)
 	}
 
 	// slack notificator

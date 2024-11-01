@@ -7,7 +7,7 @@ import (
 const (
 	// Version number
 
-	Version = "2.0.4"
+	Version = "2.0.5"
 
 	// OK service status
 	OK = "OK"

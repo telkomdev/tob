@@ -160,8 +160,10 @@ func (r *Runner) InitServices() error {
 			return errors.New("invalid config file")
 		}
 
-		if s, ok := initServiceKind(tob.ServiceKind(serviceKind), pluginPath, r.verbose); ok {
-			r.services[name] = s
+		if serviceEnabled {
+			if s, ok := initServiceKind(tob.ServiceKind(serviceKind), pluginPath, r.verbose); ok {
+				r.services[name] = s
+			}
 		}
 
 		if service, ok := r.services[name]; ok && service != nil && serviceEnabled {

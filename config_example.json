@@ -704,7 +704,7 @@
             "enable": false,
             "tags": ["product 1", "product 2"],
             "pics": ["bob", "john"],
-            "pluginPath": "/Users/wuriyanto/Documents/go-work/tob/examples/plugins/dummy-plugin/dummyplugin.so",
+            "pluginPath": "/Users/bob/Documents/go-work/tob/examples/plugins/dummy-plugin/dummyplugin.so",
             "notificator": {
                 "discord": [
                     {

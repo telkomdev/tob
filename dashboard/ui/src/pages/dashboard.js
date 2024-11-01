@@ -22,6 +22,10 @@ function Dashboard() {
   useEffect(() => {
     const fetchServiceData = async () => {
       try {
+
+        // Reset error state before each fetch attempt
+        setError(null);
+
         const response = await fetch('/api/services', {
             method: 'GET',
             headers: {

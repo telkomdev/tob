@@ -20,6 +20,7 @@ import (
 	"github.com/telkomdev/tob/services/postgres"
 	"github.com/telkomdev/tob/services/redisdb"
 	"github.com/telkomdev/tob/services/web"
+	"github.com/telkomdev/tob/util"
 )
 
 // Runner the tob runner
@@ -199,7 +200,7 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 				}
 
 				for _, notificator := range s.GetNotificators() {
-					if !tob.IsNilish(notificator) {
+					if !util.IsNilish(notificator) {
 						if notificator.IsEnabled() {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {
@@ -221,7 +222,7 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 				}
 
 				for _, notificator := range s.GetNotificators() {
-					if !tob.IsNilish(notificator) {
+					if !util.IsNilish(notificator) {
 						if notificator.IsEnabled() {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {

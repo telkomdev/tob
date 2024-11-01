@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"plugin"
 	"time"
 
 	"github.com/telkomdev/tob"
@@ -49,7 +50,26 @@ func NewRunner(configs config.Config, verbose bool) (*Runner, error) {
 	return runner, nil
 }
 
-func initServiceKind(serviceKind tob.ServiceKind, verbose bool) (tob.Service, bool) {
+func lookupPlugin(pluginPath string) (tob.Service, error) {
+	plug, err := plugin.Open(pluginPath)
+	if err != nil {
+		return nil, err
+	}
+
+	serviceSymbol, err := plug.Lookup("Service")
+	if err != nil {
+		return nil, err
+	}
+
+	s, ok := serviceSymbol.(tob.Service)
+	if !ok {
+		return nil, errors.New("symbol is not valid tob.Service")
+	}
+
+	return s, nil
+}
+
+func initServiceKind(serviceKind tob.ServiceKind, pluginPath string, verbose bool) (tob.Service, bool) {
 	services := make(map[tob.ServiceKind]tob.Service)
 	services[tob.Airflow] = airflow.NewAirflow(verbose, tob.Logger)
 	services[tob.AirflowFlower] = airflow.NewAirflowFlower(verbose, tob.Logger)
@@ -63,6 +83,15 @@ func initServiceKind(serviceKind tob.ServiceKind, verbose bool) (tob.Service, bo
 	services[tob.Redis] = redisdb.NewRedis(verbose, tob.Logger)
 	services[tob.Web] = web.NewWeb(verbose, tob.Logger)
 	services[tob.Elasticsearch] = elasticsearch.NewElasticsearch(verbose, tob.Logger)
+
+	if pluginPath != "" {
+		servicePlugin, err := lookupPlugin(pluginPath)
+		if err != nil {
+			panic(err)
+		}
+
+		services[tob.Plugin] = servicePlugin
+	}
 
 	s, ok := services[serviceKind]
 	return s, ok
@@ -121,12 +150,17 @@ func (r *Runner) InitServices() error {
 			checkInterval = 5000
 		}
 
+		pluginPath, ok := conf["pluginPath"].(string)
+		if !ok {
+			pluginPath = ""
+		}
+
 		serviceEnabled, ok := conf["enable"].(bool)
 		if !ok {
 			return errors.New("invalid config file")
 		}
 
-		if s, ok := initServiceKind(tob.ServiceKind(serviceKind), r.verbose); ok {
+		if s, ok := initServiceKind(tob.ServiceKind(serviceKind), pluginPath, r.verbose); ok {
 			r.services[name] = s
 		}
 

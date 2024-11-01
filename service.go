@@ -41,6 +41,9 @@ var (
 	// Kafka servie kind
 	Kafka ServiceKind = "kafka"
 
+	// Plugin service kind
+	Plugin ServiceKind = "plugin"
+
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
 )

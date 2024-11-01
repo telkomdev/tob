@@ -697,6 +697,74 @@
             }
         },
 
+        "dummy_plugin_one": {
+            "kind": "plugin",
+            "url": "https://www.google.com",
+            "checkInterval": 5,
+            "enable": false,
+            "tags": ["product 1", "product 2"],
+            "pics": ["bob", "john"],
+            "pluginPath": "/Users/wuriyanto/Documents/go-work/tob/examples/plugins/dummy-plugin/dummyplugin.so",
+            "notificator": {
+                "discord": [
+                    {
+                        "name": "BoyBot",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    },
+                    {
+                        "name": "BoyBot2",
+                        "url": "https://discord.com/api/webhooks/YOUR_API_ID/YOUR_API_ID",
+                        "avatarUrl": "https://i.imgur.com/KHzN7QR.png",
+                        "mentions": [
+                            "@8XXXXXXXXXXXXXXXXX",
+                            "@here"
+                        ],
+                        "enable": false
+                    }
+                ],
+
+                "slack": {
+                    "webhookUrl": "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXX",
+                    "mentions": [
+                        "@UXXXXXXXX",
+                        "!here"
+                    ],
+                    "enable": false
+                },
+
+                "email": {
+                    "authEmail": "postmaster@sandboxxxx.mailgun.org",
+                    "authPassword": "xxxx",
+                    "authHost": "smtp.mailgun.org",
+                    "smtpAddress": "smtp.mailgun.org:587",
+                    "from": "your_email_sender@gmail.com",
+                    "to": ["your_email_recipient_1@gmail.com", "your_email_recipient_2@gmail.com"],
+                    "subject": "Tob Notification",
+                    "enable": false
+                },
+
+                "telegram": {
+                    "botToken": "XXXXXXXXXX:XXXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXX",
+                    "groupId": "-111111111",
+                    "enable": false
+                },
+
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
+        },
+
         "google": {
             "kind": "web",
             "url": "https://www.google.com",

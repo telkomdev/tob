@@ -9,6 +9,8 @@ There are several limitations currently at https://pkg.go.dev/plugin.
 
 - The version of the operating system used to run the plugin binary and main binary must be the same as the one you used to build the plugin binary and main binary. For example, if you want to run the plugin binary and main binary on Ubuntu 20.04, you have to build it using Ubuntu 20.04.
 
+With the limitations above, you will often encounter errors like this `/lib64/libc.so.6: version 'GLIBC_2.xx' not found (required by /my/app)`. So you need to build Tob from source directly.
+
 ### Getting started
 
 - Clone the latest Tob code

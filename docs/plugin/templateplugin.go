@@ -63,6 +63,14 @@ func (d *TemplatePlugin) SetURL(url string) {
 
 // Connect to service if needed
 func (d *TemplatePlugin) Connect() error {
+	if d.logger == nil {
+		d.logger = tob.Logger
+	}
+
+	if d.stopChan == nil {
+		d.stopChan = make(chan bool, 1)
+	}
+
 	if d.verbose {
 		d.logger.Println("connect dummy")
 	}

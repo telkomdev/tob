@@ -71,19 +71,14 @@ func (d *TemplatePlugin) Connect() error {
 		d.stopChan = make(chan bool, 1)
 	}
 
-	if d.verbose {
-		d.logger.Println("connect dummy")
-	}
+	d.logger.Println("connect dummy plugin")
 
 	return nil
 }
 
 // Close will close the service resources if needed
 func (d *TemplatePlugin) Close() error {
-	if d.verbose {
-		d.logger.Println("close dummy plugin")
-	}
-
+	d.logger.Println("close dummy plugin")
 	return nil
 }
 

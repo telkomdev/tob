@@ -841,6 +841,25 @@
             "enable": false,
             "tags": ["product 1", "product 2"],
             "pics": ["ryan", "walker"]
+        },
+
+        "ssl_1_status": {
+            "kind": "sslstatus",
+            "url": "http://localhost:9113",
+            "checkInterval": 120,
+            "shellFile": "/home/user/checkssl/check-ssl.sh",
+            "enable": true,
+            "tags": ["product 1", "product 2"],
+            "pics": ["ryan", "walker"],
+            "notificator": {
+                "webhook": [
+                    {
+                        "url": "http://localhost:9115/api/tob/webhook",
+                        "tobToken": "tob-token-12345",
+                        "enable": true
+                    }
+                ]
+            }
         }
     },
 

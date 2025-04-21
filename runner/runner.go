@@ -20,6 +20,7 @@ import (
 	"github.com/telkomdev/tob/services/oracle"
 	"github.com/telkomdev/tob/services/postgres"
 	"github.com/telkomdev/tob/services/redisdb"
+	"github.com/telkomdev/tob/services/sslstatus"
 	"github.com/telkomdev/tob/services/web"
 	"github.com/telkomdev/tob/util"
 )
@@ -82,6 +83,7 @@ func initServiceKind(serviceKind tob.ServiceKind, pluginPath string, verbose boo
 	services[tob.Oracle] = oracle.NewOracle(verbose, tob.Logger)
 	services[tob.Redis] = redisdb.NewRedis(verbose, tob.Logger)
 	services[tob.Web] = web.NewWeb(verbose, tob.Logger)
+	services[tob.SSLStatus] = sslstatus.NewSSLStatus(verbose, tob.Logger)
 	services[tob.Elasticsearch] = elasticsearch.NewElasticsearch(verbose, tob.Logger)
 
 	if pluginPath != "" {
@@ -224,6 +226,23 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 
 			resp := s.Ping()
 			respStr := string(resp)
+
+			// SSL Monitoring
+			for _, notificator := range s.GetNotificators() {
+				if !util.IsNilish(notificator) {
+					if notificator.IsEnabled() && notificator.Provider() == "webhook" && s.Name() == string(tob.SSLStatus) {
+						notificatorMessage := fmt.Sprintf("%s | |", n)
+						if s.GetMessage() != "" {
+							notificatorMessage = fmt.Sprintf("%s is MONITORED | %s", n, s.GetMessage())
+						}
+						err := notificator.Send(notificatorMessage)
+						if err != nil {
+							tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+						}
+					}
+				}
+			}
+
 			if respStr == tob.NotOk && s.IsRecover() {
 				// set last downtime
 				s.SetLastDownTimeNow()
@@ -237,7 +256,7 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 
 				for _, notificator := range s.GetNotificators() {
 					if !util.IsNilish(notificator) {
-						if notificator.IsEnabled() {
+						if notificator.IsEnabled() && s.Name() != string(tob.SSLStatus) {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {
 								tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
@@ -259,7 +278,7 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 
 				for _, notificator := range s.GetNotificators() {
 					if !util.IsNilish(notificator) {
-						if notificator.IsEnabled() {
+						if notificator.IsEnabled() && s.Name() != string(tob.SSLStatus) {
 							err := notificator.Send(notificatorMessage)
 							if err != nil {
 								tob.Logger.Printf("notificator %s error: %s\n", notificator.Provider(), err.Error())

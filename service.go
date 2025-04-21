@@ -44,6 +44,9 @@ var (
 	// Plugin service kind
 	Plugin ServiceKind = "plugin"
 
+	// DiskStatus service kind
+	SSLStatus ServiceKind = "sslstatus"
+
 	// Dummy service kind
 	Dummy ServiceKind = "dummy"
 )

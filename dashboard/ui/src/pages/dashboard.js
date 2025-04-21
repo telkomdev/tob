@@ -50,16 +50,19 @@ function Dashboard() {
             };
           });
 
+          const statusPriority = {
+            DOWN: 0,
+            MONITORED: 1,
+            UP: 2,
+          };
+          
           serviceArray.sort((a, b) => {
-            if (a.status === 'DOWN' && b.status === 'UP') return -1;
-            if (a.status === 'UP' && b.status === 'DOWN') return 1;
-            return 0;
+            return statusPriority[a.status] - statusPriority[b.status];
           });
 
           setServices(serviceArray);
           setDashboardTitle(result.data.dashboardTitle);
         } else {
-          console.log(result)
           if (result.message) {
             // if token is expired, force logout
             if (result.message.includes('token expired')) {
@@ -112,7 +115,10 @@ function Dashboard() {
     borderRadius: '4px',
     color: '#fff',
     fontWeight: 'bold',
-    backgroundColor: status === 'UP' ? '#28a745' : '#dc3545',
+    backgroundColor:
+      status === 'UP' ? '#28a745' :
+      status === 'DOWN' ? '#dc3545' :
+      '#ffc107', 
     whiteSpace: 'nowrap',
     animation: 'pulse 1s infinite',
     flexShrink: 0,
@@ -138,6 +144,13 @@ function Dashboard() {
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     cursor: 'pointer',
   });
+
+  const getSeverityColor = (line) => {
+    if (line.includes('Warning')) return '#967205';
+    if (line.includes('Critical') || line.includes('Danger')) return '#dc3545';
+    if (line.includes('Info')) return '#17a2b8';
+    return '#212529';
+  };
 
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
@@ -251,21 +264,39 @@ function Dashboard() {
                 {service.name}
               </span>
               <span style={getStatusStyle(service.status)}>
-                {service.status === 'UP' ? 'OK' : 'Not OK'}
+                {service.status === 'UP'
+                  ? 'OK'
+                  : service.status === 'DOWN'
+                  ? 'Not OK'
+                  : service.status === 'MONITORED'
+                  ? 'Monitored'
+                  : service.status}
               </span>
             </div>
-      
-            {service.status === 'DOWN' && (
-              <span style={{ 
+
+            {service.messageDetails && service.kind === 'sslstatus' ? (
+              <div style={{ fontSize: '14px', marginBottom: '10px' }}>
+                {service.messageDetails.split('\n').map((line, index) => (
+                    <div key={index} style={{ color: getSeverityColor(line)}}>
+                      {line}
+                    </div>
+                ))}
+              </div>
+            )
+            :
+            (
+              <div style={{ 
                 fontSize: '14px', 
                 color: '#dc3545', 
                 marginBottom: '10px', 
                 wordWrap: 'break-word',
                 overflowWrap: 'break-word',
+                whiteSpace: 'pre-line',
               }}>
                 {service.messageDetails}
-              </span>
-            )}
+              </div>
+            )
+          }
 
             {service.pics && service.pics.length > 0 && (
               <span style={{ fontSize: '14px', color: '#555', marginBottom: '10px', fontWeight: 'bold' }}>

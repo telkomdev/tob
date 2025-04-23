@@ -65,7 +65,7 @@ func (d *SSLStatus) Ping() []byte {
 		}
 	}
 
-	sslStatusData := checkSSLExpiryMulti(domianStrs)
+	sslStatusData := checkSSLExpiryMulti(domianStrs, d.logger)
 
 	d.SetMessage(sslStatusData)
 

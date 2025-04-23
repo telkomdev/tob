@@ -3,11 +3,12 @@ package sslstatus
 import (
 	"crypto/tls"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 )
 
-func checkSSLExpiry(domain string) string {
+func checkSSLExpiry(domain string, logger *log.Logger) string {
 	conn, err := tls.Dial("tcp", domain+":443", &tls.Config{
 		InsecureSkipVerify: true,
 	})
@@ -35,7 +36,7 @@ func checkSSLExpiry(domain string) string {
 
 		issuer := cert.Issuer.CommonName
 		sub := cert.Issuer.CommonName
-		fmt.Println(issuer, " | ", sub)
+		logger.Println(cleanDomain, " | ", issuer, " | ", sub)
 
 		expiredDate := cert.NotAfter.Format(time.RFC1123)
 
@@ -67,11 +68,11 @@ func checkSSLExpiry(domain string) string {
 	return fmt.Sprintf("failed to perform a TLS handshake for the domain: %s\n", cleanDomain)
 }
 
-func checkSSLExpiryMulti(domains []string) string {
+func checkSSLExpiryMulti(domains []string, logger *log.Logger) string {
 	var sb strings.Builder
 
 	for _, domain := range domains {
-		sb.WriteString(checkSSLExpiry(domain))
+		sb.WriteString(checkSSLExpiry(domain, logger))
 	}
 	return sb.String()
 }

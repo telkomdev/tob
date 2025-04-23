@@ -845,9 +845,11 @@
 
         "ssl_1_status": {
             "kind": "sslstatus",
-            "url": "http://localhost:9113",
-            "checkInterval": 120,
-            "shellFile": "/home/user/checkssl/check-ssl.sh",
+            "url": "",
+            "checkInterval": 10,
+            "domains": [
+                "google.com"
+            ],
             "enable": true,
             "tags": ["product 1", "product 2"],
             "pics": ["ryan", "walker"],

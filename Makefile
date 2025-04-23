@@ -16,7 +16,7 @@ build-osx-arm: build-ui
 
 # build for Linux 64
 build-linux: build-ui
-	GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o tob github.com/telkomdev/tob/cmd/tob
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o tob github.com/telkomdev/tob/cmd/tob
 
 # build for Windows 64
 build-win: build-ui
@@ -34,7 +34,7 @@ build-http-agent-osx-arm:
 
 # build for Linux 64
 build-http-agent-linux:
-	GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o tob-http-agent github.com/telkomdev/tob/cmd/tob-http-agent
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags '-s -w' -o tob-http-agent github.com/telkomdev/tob/cmd/tob-http-agent
 
 test:
 	go test ./...

@@ -228,16 +228,18 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 			respStr := string(resp)
 
 			// SSL Monitoring
-			for _, notificator := range s.GetNotificators() {
-				if !util.IsNilish(notificator) {
-					if notificator.IsEnabled() && notificator.Provider() == "webhook" && s.Name() == string(tob.SSLStatus) {
-						notificatorMessage := fmt.Sprintf("%s | |", n)
-						if s.GetMessage() != "" {
-							notificatorMessage = fmt.Sprintf("%s is MONITORED | %s", n, s.GetMessage())
-						}
-						err := notificator.Send(notificatorMessage)
-						if err != nil {
-							tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+			if s.Name() == string(tob.SSLStatus) {
+				for _, notificator := range s.GetNotificators() {
+					if !util.IsNilish(notificator) {
+						if notificator.IsEnabled() && notificator.Provider() == "webhook" {
+							notificatorMessage := fmt.Sprintf("%s is DOWN", n)
+							if s.GetMessage() != "" {
+								notificatorMessage = fmt.Sprintf("%s is MONITORED | %s", n, s.GetMessage())
+							}
+							err := notificator.Send(notificatorMessage)
+							if err != nil {
+								tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+							}
 						}
 					}
 				}

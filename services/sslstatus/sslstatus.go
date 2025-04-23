@@ -1,19 +1,12 @@
 package sslstatus
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"log"
-	"net"
-	"net/url"
 	"strings"
 	"time"
 
 	"github.com/telkomdev/tob"
 	"github.com/telkomdev/tob/config"
-	"github.com/telkomdev/tob/data"
-	"github.com/telkomdev/tob/httpx"
 	"github.com/telkomdev/tob/util"
 )
 
@@ -30,12 +23,6 @@ type SSLStatus struct {
 	message           string
 	configs           config.Config
 	notificatorConfig config.Config
-}
-
-type target struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Data    string `json:"data"`
 }
 
 var SEVERITIES = []string{"Warning", "Danger", "Critical"}
@@ -59,112 +46,26 @@ func (d *SSLStatus) Name() string {
 	return "sslstatus"
 }
 
-// Resolve hostname to IPv4 address
-func (d *SSLStatus) resolveIPv4() string {
-	ipv4 := "N/A"
-
-	hostUrl, err := url.Parse(d.url)
-	if err != nil {
-		if d.verbose {
-			d.logger.Println(err)
-		}
-		return ipv4
-	}
-	hostname := hostUrl.Hostname()
-
-	ips, err := net.LookupIP(hostname)
-	if err != nil {
-		if d.verbose {
-			d.logger.Println(err)
-		}
-		return ipv4
-	}
-
-	for _, ip := range ips {
-		if ip.To4() != nil {
-			ipv4 = ip.String()
-			break
-		}
-	}
-
-	return ipv4
-}
-
 // Ping will try to ping the service
 func (d *SSLStatus) Ping() []byte {
-	shellFilePathStr, ok := d.configs["shellFile"].(string)
+	domains, ok := d.configs["domains"].([]interface{})
 	if !ok {
 		if d.verbose {
-			d.logger.Println("shellFilePathStr is not valid")
+			d.logger.Println("domains is not in the SSL_status config")
 		}
 		return []byte("NOT_OK")
 	}
 
-	if d.verbose {
-		d.logger.Printf("tob-http-agent check %s SSL Status\n", shellFilePathStr)
-	}
+	var domianStrs []string
 
-	fileSystemPayload := data.FileSystem{
-		Path: shellFilePathStr,
-	}
-
-	payloadJSON, err := json.Marshal(fileSystemPayload)
-	if err != nil {
-		if d.verbose {
-			d.logger.Println(err)
+	for _, domain := range domains {
+		domainStr, ok := domain.(string)
+		if ok {
+			domianStrs = append(domianStrs, domainStr)
 		}
-		return []byte("NOT_OK")
 	}
 
-	headers := make(map[string]string)
-	headers["Content-Type"] = "application/json"
-
-	resp, err := httpx.HTTPPost(fmt.Sprintf("%s/check-ssl", d.url), bytes.NewBuffer(payloadJSON), headers, 120)
-	if err != nil {
-		if d.verbose {
-			d.logger.Println(err)
-		}
-		return []byte("NOT_OK")
-	}
-
-	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
-	if !statusOK {
-		if d.verbose {
-			d.logger.Printf("SSLStatus Ping status: %d\n", resp.StatusCode)
-		}
-
-		return []byte("NOT_OK")
-	}
-
-	if d.verbose {
-		d.logger.Printf("SSLStatus Ping status: %d\n", resp.StatusCode)
-	}
-
-	defer func() { resp.Body.Close() }()
-
-	var target target
-
-	err = json.NewDecoder(resp.Body).Decode(&target)
-	if err != nil {
-		if d.verbose {
-			d.logger.Println(err)
-		}
-
-		return []byte("NOT_OK")
-	}
-
-	if d.verbose {
-		d.logger.Println(target)
-	}
-
-	sslStatusData := target.Data
-
-	ipv4 := d.resolveIPv4()
-
-	if d.verbose {
-		d.logger.Println("IP :", ipv4)
-		d.logger.Println("sslStatusData: ", sslStatusData)
-	}
+	sslStatusData := checkSSLExpiryMulti(domianStrs)
 
 	d.SetMessage(sslStatusData)
 

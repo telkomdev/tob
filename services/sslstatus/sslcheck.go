@@ -20,10 +20,10 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 	cleanDomain := strings.TrimPrefix(domain, "*.")
 	certs := conn.ConnectionState().PeerCertificates
 
+	status := "Info"
+
 	if len(certs) > 0 {
 		cert := certs[0]
-
-		status := "Info"
 
 		// checking whether the certificate matches the domain being checked
 		if err := cert.VerifyHostname(cleanDomain); err != nil {
@@ -65,7 +65,10 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 			expiredDate)
 	}
 
-	return fmt.Sprintf("failed to perform a TLS handshake for the domain: %s\n", cleanDomain)
+	status = "Danger"
+	return fmt.Sprintf("%s: failed to perform a TLS handshake for the domain: %s\n",
+		status,
+		cleanDomain)
 }
 
 func checkSSLExpiryMulti(domains []string, logger *log.Logger) string {

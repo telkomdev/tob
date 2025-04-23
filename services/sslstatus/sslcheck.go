@@ -12,15 +12,22 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 	conn, err := tls.Dial("tcp", domain+":443", &tls.Config{
 		InsecureSkipVerify: true,
 	})
+
+	status := "Info"
+
 	if err != nil {
-		return fmt.Sprintf("error: %s - %v\n", strings.TrimPrefix(domain, "*."), err)
+		status = "Danger"
+
+		return fmt.Sprintf("%s: %s - %v\n",
+			status,
+			strings.TrimPrefix(domain, "*."),
+			err)
 	}
+
 	defer conn.Close()
 
 	cleanDomain := strings.TrimPrefix(domain, "*.")
 	certs := conn.ConnectionState().PeerCertificates
-
-	status := "Info"
 
 	if len(certs) > 0 {
 		cert := certs[0]

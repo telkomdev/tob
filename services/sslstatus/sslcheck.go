@@ -8,37 +8,63 @@ import (
 )
 
 func checkSSLExpiry(domain string) string {
-	conn, err := tls.Dial("tcp", domain+":443", &tls.Config{})
+	conn, err := tls.Dial("tcp", domain+":443", &tls.Config{
+		InsecureSkipVerify: true,
+	})
 	if err != nil {
 		return fmt.Sprintf("error: %s - %v\n", strings.TrimPrefix(domain, "*."), err)
 	}
-
 	defer conn.Close()
 
 	cleanDomain := strings.TrimPrefix(domain, "*.")
-
 	certs := conn.ConnectionState().PeerCertificates
+
 	if len(certs) > 0 {
 		cert := certs[0]
-		daysLeft := int(time.Until(cert.NotAfter).Hours() / 24)
 
 		status := "Info"
-		if daysLeft <= 30 {
-			status = "Warning"
-		} else if daysLeft <= 15 {
+
+		// checking whether the certificate matches the domain being checked
+		if err := cert.VerifyHostname(cleanDomain); err != nil {
 			status = "Danger"
-		} else if daysLeft <= 7 {
-			status = "Critical"
+			return fmt.Sprintf("%s: invalid SSL: cert for %s does not match (%s)\n",
+				status,
+				cleanDomain,
+				cert.Subject.CommonName)
 		}
 
-		return fmt.Sprintf("%s: %s will expire in %d days (%s)\n",
+		issuer := cert.Issuer.CommonName
+		sub := cert.Issuer.CommonName
+		fmt.Println(issuer, " | ", sub)
+
+		expiredDate := cert.NotAfter.Format(time.RFC1123)
+
+		if cert.NotAfter.Before(time.Now()) {
+			status = "Danger"
+			return fmt.Sprintf("%s: SSL %s expired on %s\n",
+				status,
+				cleanDomain,
+				expiredDate)
+		}
+
+		daysLeft := int(time.Until(cert.NotAfter).Hours() / 24)
+
+		if daysLeft <= 7 {
+			status = "Critical"
+		} else if daysLeft <= 15 {
+			status = "Danger"
+		} else if daysLeft <= 30 {
+			status = "Warning"
+		}
+
+		return fmt.Sprintf("%s: SSL %s will expire in %d days (%s)\n",
 			status,
 			cleanDomain,
 			daysLeft,
-			cert.NotAfter.Format(time.RFC1123))
+			expiredDate)
 	}
 
-	return fmt.Sprintf("failed to perform a TLS handshake for the domain: %s \n", cleanDomain)
+	return fmt.Sprintf("failed to perform a TLS handshake for the domain: %s\n", cleanDomain)
 }
 
 func checkSSLExpiryMulti(domains []string) string {

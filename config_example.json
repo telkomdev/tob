@@ -848,7 +848,8 @@
             "url": "",
             "checkInterval": 10,
             "domains": [
-                "google.com"
+                "google.com",
+                "cloudflare.com"
             ],
             "enable": true,
             "tags": ["product 1", "product 2"],
@@ -872,5 +873,5 @@
     "dashboardPassword": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
     "dashboardWebhookToken": "tob-token-12345",
 
-    "version": "2.0.5"
+    "version": "2.0.6"
 }

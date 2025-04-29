@@ -35,7 +35,7 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 		// checking whether the certificate matches the domain being checked
 		if err := cert.VerifyHostname(cleanDomain); err != nil {
 			status = "Danger"
-			return fmt.Sprintf("%s: invalid SSL: cert for %s does not match (%s)\n",
+			return fmt.Sprintf("%s | %s | does not match (%s) |\n",
 				status,
 				cleanDomain,
 				cert.Subject.CommonName)
@@ -49,7 +49,7 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 
 		if cert.NotAfter.Before(time.Now()) {
 			status = "Danger"
-			return fmt.Sprintf("%s: SSL %s expired on %s\n",
+			return fmt.Sprintf("%s | %s | expired on %s |\n",
 				status,
 				cleanDomain,
 				expiredDate)
@@ -65,7 +65,7 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 			status = "Warning"
 		}
 
-		return fmt.Sprintf("%s: SSL %s will expire in %d days (%s)\n",
+		return fmt.Sprintf("%s | %s | expire in %d days | (%s)\n",
 			status,
 			cleanDomain,
 			daysLeft,
@@ -73,7 +73,7 @@ func checkSSLExpiry(domain string, logger *log.Logger) string {
 	}
 
 	status = "Danger"
-	return fmt.Sprintf("%s: failed to perform a TLS handshake for the domain: %s\n",
+	return fmt.Sprintf("%s | %s | failed to perform a TLS handshake |\n",
 		status,
 		cleanDomain)
 }

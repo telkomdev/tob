@@ -102,7 +102,7 @@ function Dashboard() {
       opacity: 1;
     }
     50% {
-      opacity: 0.7;
+      opacity: 0.2;
     }
     100% {
       opacity: 1;
@@ -110,19 +110,23 @@ function Dashboard() {
   }
   `;
 
-  const getStatusStyle = (status) => ({
-    padding: '5px 10px',
-    borderRadius: '4px',
-    color: '#fff',
-    fontWeight: 'bold',
-    backgroundColor:
-      status === 'UP' ? '#28a745' :
-      status === 'DOWN' ? '#dc3545' :
-      '#ffc107', 
-    whiteSpace: 'nowrap',
-    animation: 'pulse 1s infinite',
-    flexShrink: 0,
-  });
+  const getStatusStyle = (status) => {
+    const randomDuration = Math.random() * 0.2 + 0.7;
+
+    return {
+      padding: '5px 10px',
+      borderRadius: '4px',
+      color: '#000',
+      fontWeight: 'bold',
+      backgroundColor:
+        status === 'UP' ? '#28a745' :
+        status === 'DOWN' ? '#dc3545' :
+        '#ffc107', 
+      whiteSpace: 'nowrap',
+      animation: `pulse ${randomDuration.toFixed(2)}s infinite`,
+      flexShrink: 0,
+    };
+  };
   
   
   
@@ -135,20 +139,20 @@ function Dashboard() {
   });
 
   const getTagStyle = () => ({
-    backgroundColor: '#fff',
-    color: '#333',
-    borderRadius: '12px',
-    padding: '3px 8px',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    color: '#ccc',
+    borderRadius: '8px',
+    padding: '2px 6px',
     fontSize: '12px',
-    border: '1px solid #ddd',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    fontWeight: '500',
     cursor: 'pointer',
   });
 
   const getSeverityColor = (line) => {
     if (line.includes('Warning')) return '#967205';
     if (line.includes('Critical') || line.includes('Danger')) return '#dc3545';
-    if (line.includes('Info')) return '#17a2b8';
+    if (line.includes('Info')) return '#04a0bf';
     return '#212529';
   };
 
@@ -169,7 +173,7 @@ function Dashboard() {
   });
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4' }}>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#212121', color: '#f5f5f5', minHeight: '100vh' }}>
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -183,20 +187,21 @@ function Dashboard() {
             title='Tob the Bot (https://github.com/telkomdev/tob)'
             alt="Logo"
             style={{
-              width: '100px',
+              width: '90px',
               height: 'auto',
+              borderRadius: '50%',
             }}
           />
         </div>
         <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
-          <h1>{dashboardTitle}</h1>
+          <h2>{dashboardTitle}</h2>
         </div>
         <div style={{ flex: '1 1 auto', textAlign: 'right' }}>
           <button
             onClick={logout}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#007bff',
+              backgroundColor: '#04a0bf',
               color: '#fff',
               border: 'none',
               borderRadius: '5px',
@@ -221,8 +226,10 @@ function Dashboard() {
             maxWidth: '600px',
             padding: '10px',
             borderRadius: '8px',
-            border: '1px solid #ddd',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            border: '1px solid #444',
+            backgroundColor: '#1e1e1e',
+            color: '#f5f5f5',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.6)',
             margin: '0 auto',
           }}
         />
@@ -234,14 +241,14 @@ function Dashboard() {
         <ul style={{ maxWidth: '800px', margin: '0 auto', padding: '0', listStyle: 'none' }}>
         {filteredServices.map((service, index) => (
           <li key={index} style={{
-            backgroundColor: '#fff',
+            backgroundColor: '#353535',
             margin: '10px 0',
             padding: '15px',
             borderRadius: '8px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.6)',
           }}>
             
             <style>{keyframes}</style>
@@ -275,12 +282,72 @@ function Dashboard() {
             </div>
 
             {service.messageDetails && service.kind === 'sslstatus' ? (
-              <div style={{ fontSize: '14px', marginBottom: '10px' }}>
-                {service.messageDetails.split('\n').map((line, index) => (
-                    <div key={index} style={{ color: getSeverityColor(line)}}>
-                      {line}
-                    </div>
-                ))}
+              <div style={{ fontSize: '11px', marginBottom: '10px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Severity</th>
+                      <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Domain</th>
+                      <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Message</th>
+                      <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Expiration Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {service.messageDetails.split('\n').map((line, index) => {
+                      const parts = line.split('|').map(part => part.trim());
+
+                      if (parts.length >= 4) {
+                        const status = parts[0];
+                        const domain = parts[1];
+                        const remainingTime = parts[2];
+                        const detail = parts[3];
+
+                        // color by status
+                        let rowColor = '';
+                        if (status.toLowerCase().includes('danger')) {
+                          rowColor = '#dc3545'; // red
+                        } else if (status.toLowerCase().includes('warning')) {
+                          rowColor = '#ffc107'; // yellow
+                        } else if (status.toLowerCase().includes('info')) {
+                          rowColor = '#28a745'; // green
+                        }
+
+                        return (
+                          <tr key={index} style={{ color: rowColor }}>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{status}</td>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{domain}</td>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{remainingTime}</td>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{detail}</td>
+                          </tr>
+                        );
+                      } else if (parts.length === 3) {
+                        // handle when there is no date or time
+                        const status = parts[0];
+                        const domain = parts[1];
+                        const detail = parts[2];
+
+                        let rowColor = '';
+                        if (status.toLowerCase().includes('danger')) {
+                          rowColor = '#dc3545';
+                        } else if (status.toLowerCase().includes('warning')) {
+                          rowColor = '#ffc107';
+                        } else if (status.toLowerCase().includes('info')) {
+                          rowColor = '#28a745';
+                        }
+
+                        return (
+                          <tr key={index} style={{ color: rowColor }}>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{status}</td>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{domain}</td>
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}></td> {}
+                            <td style={{ border: '1px solid #ccc', padding: '8px' }}>{detail}</td>
+                          </tr>
+                        );
+                      }
+                      return null;
+                    })}
+                  </tbody>
+                </table>
               </div>
             )
             :
@@ -304,8 +371,11 @@ function Dashboard() {
               </span>
             )}
 
-            <span style={{ fontSize: '13px', color: '#555' }}>
-              <span style={{ color: '#593f03' }}>Last checked: {service.latestCheckTime}</span> 
+            <span style={{ fontSize: '12px', color: '#aaa' }}>
+              <span style={{ color: '#d4af37', fontWeight: 500 }}>
+                Last checked:
+              </span>{' '}
+              {service.latestCheckTime}
             </span>
             
             {service.tags && (
@@ -315,7 +385,7 @@ function Dashboard() {
                     key={tagIndex} 
                     style={{
                       ...getTagStyle(),
-                      backgroundColor: selectedTag === tag ? '#007bff' : '#fff',
+                      backgroundColor: selectedTag === tag ? '#04a0bf' : '#fff',
                       color: selectedTag === tag ? '#fff' : '#333',
                     }}
                     onClick={() => handleTagClick(tag)}>

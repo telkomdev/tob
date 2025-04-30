@@ -282,8 +282,8 @@ function Dashboard() {
             </div>
 
             {service.messageDetails && service.kind === 'sslstatus' ? (
-              <div style={{ fontSize: '11px', marginBottom: '10px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
+              <div style={{ fontSize: '11px', marginBottom: '10px', overflowX: 'auto', maxWidth: '100%' }}>
+                <table style={{ width: 'max-content', borderCollapse: 'collapse', border: '1px solid #ccc' }}>
                   <thead>
                     <tr>
                       <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Severity</th>

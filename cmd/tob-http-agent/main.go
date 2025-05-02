@@ -65,7 +65,6 @@ func main() {
 
 	http.HandleFunc("/", loggerMiddleware(indexHandler()))
 	http.HandleFunc("/check-disk", loggerMiddleware(checkStorageHandler()))
-	http.HandleFunc("/check-ssl", loggerMiddleware(checkSSLHandler()))
 
 	tob.Logger.Printf("webapp running on port :%d\n", httpPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", httpPort), nil)
@@ -124,58 +123,6 @@ func checkStorageHandler() http.HandlerFunc {
 		if err != nil {
 			tob.Logger.Println(err)
 			jsonResponse(res, 500, []byte(`{"success": false, "message": "error check storage"}`))
-			return
-		}
-
-		jsonResponse(res, 200, response)
-	}
-}
-
-func checkSSLHandler() http.HandlerFunc {
-	return func(res http.ResponseWriter, req *http.Request) {
-		if req.Method != http.MethodPost {
-			jsonResponse(res, 400, []byte(`{"success": false, "message": "invalid http method"}`))
-			return
-		}
-
-		var fileSystem data.FileSystem
-		if err := json.NewDecoder(req.Body).Decode(&fileSystem); err != nil {
-			jsonResponse(res, 400, []byte(`{"success": false, "message": "invalid file system payload"}`))
-			return
-		}
-
-		data, wait, err := checkSSLStatus(fileSystem.Path)
-		if err != nil {
-			jsonResponse(res, 500, []byte(`{"success": false, "message": "error check SSL status"}`))
-			return
-		}
-
-		err = wait()
-		if err != nil {
-			tob.Logger.Println(err)
-			jsonResponse(res, 500, []byte(`{"success": false, "message": "error check SSL status"}`))
-			return
-		}
-
-		// var dataStr = ""
-
-		// datas := strings.Split(string(data), "\n")
-
-		// if len(datas) > 0 {
-		// 	dataStr = strings.Join(datas, "\n")
-		// }
-
-		payload := customResponse{
-			Success: true,
-			Message: "SSL status",
-			Data:    string(data),
-		}
-
-		response, err := json.Marshal(payload)
-
-		if err != nil {
-			tob.Logger.Println(err)
-			jsonResponse(res, 500, []byte(`{"success": false, "message": "error check SSL status"}`))
 			return
 		}
 
@@ -316,38 +263,4 @@ func checkDiskStatus(directoryTarget string) (map[string]interface{}, func() err
 	}
 
 	return jsonMap, wait, nil
-}
-
-func checkSSLStatus(shellDir string) ([]byte, func() error, error) {
-	// check if shell file exist
-	shPath, err := exec.LookPath(shellDir)
-	if err != nil {
-		tob.Logger.Println(err)
-		return nil, nil, err
-	}
-
-	cmd := exec.Command(shPath)
-	outPipe, err := cmd.StdoutPipe()
-	if err != nil {
-		tob.Logger.Println(err)
-		return nil, nil, err
-	}
-
-	err = cmd.Start()
-	if err != nil {
-		tob.Logger.Println(err)
-		return nil, nil, err
-	}
-
-	b, err := io.ReadAll(outPipe)
-	if err != nil {
-		tob.Logger.Println(err)
-		return nil, nil, err
-	}
-
-	wait := func() error {
-		return cmd.Wait()
-	}
-
-	return b, wait, nil
 }

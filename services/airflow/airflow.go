@@ -17,18 +17,19 @@ import (
 
 // Airflow service
 type Airflow struct {
-	url                string
-	recovered          bool
-	lastDownTime       string
-	schedulerStatus    string
-	metadatabaseStatus string
-	enabled            bool
-	verbose            bool
-	logger             *log.Logger
-	checkInterval      int
-	stopChan           chan bool
-	message            string
-	notificatorConfig  config.Config
+	url                      string
+	recovered                bool
+	lastDownTime             string
+	schedulerStatus          string
+	latestSchedulerHeartbeat string
+	metadatabaseStatus       string
+	enabled                  bool
+	verbose                  bool
+	logger                   *log.Logger
+	checkInterval            int
+	stopChan                 chan bool
+	message                  string
+	notificatorConfig        config.Config
 }
 
 // Airflow's constructor
@@ -72,34 +73,85 @@ func (a *Airflow) checkClusterStatus(resp *http.Response) error {
 		return err
 	}
 
-	schedulerStatus, ok := data["scheduler"].(map[string]interface{})["status"].(string)
+	schedulerRaw, ok := data["scheduler"].(map[string]interface{})
 	if !ok {
 		if a.verbose {
-			a.logger.Printf("cannot read scheduler status: %v\n", err)
+			a.logger.Println("cannot read scheduler block (not a map)")
+		}
+		return errors.New("invalid scheduler block")
+	}
+
+	schedulerStatus, ok := schedulerRaw["status"].(string)
+	if !ok {
+		if a.verbose {
+			a.logger.Println("cannot read scheduler status (not a string)")
 		}
 
-		return err
+		return errors.New("invalid scheduler status")
 	}
+
+	latestSchedulerHeartbeat, ok := schedulerRaw["latest_scheduler_heartbeat"].(string)
+	if !ok {
+		if a.verbose {
+			a.logger.Println("cannot read scheduler latest_scheduler_heartbeat (not a string)")
+		}
+
+		return errors.New("invalid latest_scheduler_heartbeat")
+	}
+
+	utcTime, err := time.Parse(time.RFC3339Nano, latestSchedulerHeartbeat)
+	if err != nil {
+		if a.verbose {
+			a.logger.Printf("failed to parse time: %v\n", err)
+		}
+
+		return errors.New("invalid latest_scheduler_heartbeat")
+	}
+
+	timezoneJakarta, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		if a.verbose {
+			a.logger.Printf("failed to load WIB location: %v\n", err)
+		}
+
+		return errors.New("invalid timezone")
+	}
+
+	wibTime := utcTime.In(timezoneJakarta)
+	a.latestSchedulerHeartbeat = wibTime.String()
+
 	a.schedulerStatus = schedulerStatus
 
-	metadatabaseStatus, ok := data["metadatabase"].(map[string]interface{})["status"].(string)
+	metadatabaseRaw, ok := data["metadatabase"].(map[string]interface{})
 	if !ok {
 		if a.verbose {
-			a.logger.Printf("cannot read metadatabase status: %v\n", err)
+			a.logger.Println("cannot read metadatabase block (not a map)")
+		}
+		return errors.New("invalid metadatabase block")
+	}
+
+	metadatabaseStatus, ok := metadatabaseRaw["status"].(string)
+	if !ok {
+		if a.verbose {
+			a.logger.Println("cannot read metadatabase status")
 		}
 
-		return err
+		return errors.New("invalid metadatabase status")
 	}
+
 	a.metadatabaseStatus = metadatabaseStatus
 
+	message := fmt.Sprintf("Airflow Scheduler Status: %s\nLatest Scheduler Heartbeat: %s\n\n\n Airflow Metadatabase: %s",
+		a.schedulerStatus, a.latestSchedulerHeartbeat, a.metadatabaseStatus)
 	if a.schedulerStatus != "healthy" || a.metadatabaseStatus != "healthy" {
-		errMsg := fmt.Sprintf("airflow is unhealthy: scheduler (%s), metadatabase (%s)", a.schedulerStatus, a.metadatabaseStatus)
 		if a.verbose {
-			a.logger.Println(errMsg)
+			a.logger.Println(message)
 		}
 
-		return errors.New(errMsg)
+		return errors.New(message)
 	}
+
+	a.SetMessage(message)
 
 	return nil
 }

@@ -227,6 +227,29 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 			resp := s.Ping()
 			respStr := string(resp)
 
+			// Airflow Monitoring
+			if s.Name() == string(tob.Airflow) {
+				for _, notificator := range s.GetNotificators() {
+					if !util.IsNilish(notificator) {
+						if notificator.IsEnabled() && notificator.Provider() == "webhook" {
+							notificatorMessage := fmt.Sprintf("%s is DOWN", n)
+							if s.GetMessage() != "" {
+								notificatorMessage = fmt.Sprintf("%s is CHECKING | %s", n, s.GetMessage())
+								if respStr == tob.NotOk {
+									notificatorMessage = fmt.Sprintf("%s is DOWN | %s", n, s.GetMessage())
+								}
+							}
+							if notificator.IsEnabled() && s.Name() != string(tob.SSLStatus) {
+								err := notificator.Send(notificatorMessage)
+								if err != nil {
+									tob.Logger.Printf("notificator %s error: %s", notificator.Provider(), err.Error())
+								}
+							}
+						}
+					}
+				}
+			}
+
 			// SSL Monitoring
 			if s.Name() == string(tob.SSLStatus) {
 				for _, notificator := range s.GetNotificators() {
@@ -275,7 +298,7 @@ func healthCheck(n string, s tob.Service, t *time.Ticker, waiter tob.Waiter) {
 
 				notificatorMessage := fmt.Sprintf("%s is UP. It was down for %s", n, s.GetDownTimeDiff())
 				if s.GetMessage() != "" {
-					notificatorMessage = fmt.Sprintf("%s %s", n, s.GetMessage())
+					notificatorMessage = fmt.Sprintf("%s is UP | %s", n, s.GetMessage())
 				}
 
 				for _, notificator := range s.GetNotificators() {

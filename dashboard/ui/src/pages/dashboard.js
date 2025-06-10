@@ -52,8 +52,9 @@ function Dashboard() {
 
           const statusPriority = {
             DOWN: 0,
-            MONITORED: 1,
-            UP: 2,
+            CHECKING: 1,
+            MONITORED: 2,
+            UP: 3,
           };
           
           serviceArray.sort((a, b) => {
@@ -121,15 +122,28 @@ function Dashboard() {
       backgroundColor:
         status === 'UP' ? '#28a745' :
         status === 'DOWN' ? '#dc3545' :
-        '#ffc107', 
+        status === 'MONITORED' ? '#ffc107' : 
+        '#b4e83a', 
       whiteSpace: 'nowrap',
       animation: `pulse ${randomDuration.toFixed(2)}s infinite`,
       flexShrink: 0,
     };
   };
-  
-  
-  
+
+  const getMessageDetailsStyle = (service) => {
+    return {
+      fontSize: '14px',
+      color:
+        service.status === 'UP' ? '#28a745' :
+        service.status === 'DOWN' ? '#dc3545' :
+        service.status === 'MONITORED' ? '#ffc107' :
+        '#b4e83a',
+      marginBottom: '10px',
+      wordWrap: 'break-word',
+      overflowWrap: 'break-word',
+      whiteSpace: 'pre-line',
+    };
+  };
   
   const getTagsStyle = () => ({
     display: 'flex',
@@ -277,6 +291,8 @@ function Dashboard() {
                   ? 'Not OK'
                   : service.status === 'MONITORED'
                   ? 'Monitored'
+                  : service.status == 'CHECKING'
+                  ? 'Checking'
                   : service.status}
               </span>
             </div>
@@ -352,14 +368,7 @@ function Dashboard() {
             )
             :
             (
-              <div style={{ 
-                fontSize: '14px', 
-                color: '#dc3545', 
-                marginBottom: '10px', 
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word',
-                whiteSpace: 'pre-line',
-              }}>
+              <div style={getMessageDetailsStyle(service)}>
                 {service.messageDetails}
               </div>
             )
